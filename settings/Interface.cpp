@@ -34,7 +34,6 @@ int SortGame::getSize() const {
     return static_cast<int>(A.size());
 }
 
-
 bool SortGame::compare(int i, int j) {
     cmp_counter++;
     // cerr << "comparing " << A[i] << " and " << A[j] << endl;
@@ -105,4 +104,26 @@ double SortGame::eta_min() const {
         sum += std::min(std::log2(count1), std::log2(count2));
     }
     return sum;
+}
+
+void SortGame::summary() {
+    cerr << "eta_diff = " << eta_diff() << endl;
+    cerr << "eta_left = " << eta_left() << endl;
+    cerr << "eta_right = " << eta_right() << endl;
+    cerr << "eta_min = " << eta_min() << endl;
+}
+
+void SortGame::output_rank()
+{
+    for (int i = 0; i < getSize(); ++i) {
+        cout << rank[i] << " ";
+    }
+    cout << endl;
+}
+
+void SortGame::print() {
+    cerr << "index, rank, pred" << endl;
+    for (int i = 0; i < getSize(); ++i) {
+        cerr << "A_" << i << "=" << rank[i] << ",p=" << preds[i] << endl;
+    }
 }

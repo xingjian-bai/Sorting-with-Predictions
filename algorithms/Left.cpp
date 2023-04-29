@@ -1,14 +1,15 @@
 #include "Left.h"
+#include "Utils.h"
 #include <algorithm>
 #include <iostream>
 #include <vector>
 using namespace std;
-
 std::vector<int> LeftAlgo::sort(SortGame &game)
 {
     // cerr << "LeftAlgo::sort" << endl;
     int n = game.getSize();
     vector<int> preds = game.getPreds();
+    preds = new_pred(preds); // 重排preds，使得preds中的数字连续
 
     int p_to_A[n], inserted[n];
     for (int i = 0; i < n; i++) {

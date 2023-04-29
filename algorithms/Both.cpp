@@ -1,14 +1,17 @@
 #include "Both.h"
+#include "Utils.h"
 #include <algorithm>
 #include <iostream>
 #include <vector>
 using namespace std;
+
 
 std::vector<int> BothAlgo::sort(SortGame &game)
 {
     // cerr << "BothAlgo::sort" << endl;
     int n = game.getSize();
     vector<int> preds = game.getPreds();
+    preds = new_pred(preds); // 重排preds，使得preds中的数字连续
 
     int p_to_A[n], inserted[n];
     for (int i = 0; i < n; i++) {
@@ -17,6 +20,8 @@ std::vector<int> BothAlgo::sort(SortGame &game)
     }
 
     vector<int> left, right;
+    // cerr counter
+    // cerr << "init counter = " << game.counter() << endl;
     for (int delta = 1; delta / 2 <= n; delta <<= 1) {
         for (int i = 0; i < n; i++)
         {
@@ -96,6 +101,7 @@ std::vector<int> BothAlgo::sort(SortGame &game)
                 }
             }
         }
+        // cerr << "delta " << delta << " " << game.counter() << endl;
     }
     // cout << "combining" << endl;
     // for (int i = 0; i < left.size(); i++)

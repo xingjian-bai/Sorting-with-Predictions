@@ -1,14 +1,16 @@
 #pragma once
-#include "Interface.h"
-#include "SortAlgo.h"
+#include "settings/Interface.h"
+#include "algorithms/SortAlgo.h"
+using namespace std;
 
 class SortController {
 public:
-    SortController(SortGame& game, SortAlgorithm& algorithm);
-
+    SortController(SortGame* game);
+    void addAlgorithm(SortAlgorithm* algorithm, string name);
     void runGame();
 
 private:
-    SortGame& game_;
-    SortAlgorithm& algorithm_;
+    SortGame* game;
+    vector<SortAlgorithm *> algorithms;
+    vector<string> names;
 };

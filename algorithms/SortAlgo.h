@@ -1,5 +1,5 @@
 #pragma once
-#include "Interface.h"
+#include "../settings/Interface.h"
 #include <vector>
 
 class SortAlgorithm {

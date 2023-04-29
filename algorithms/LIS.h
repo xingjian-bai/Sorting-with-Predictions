@@ -1,9 +1,9 @@
 #include "SortAlgo.h"
 
-class BothAlgo : public SortAlgorithm {
+class LIS : public SortAlgorithm {
 public:
     //init functions
-    BothAlgo() = default;
+    LIS() = default;
 
     std::vector<int> sort(SortGame& game) override;
 };

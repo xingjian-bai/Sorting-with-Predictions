@@ -1,5 +1,4 @@
-#pragma once
-#include "../SortAlgo.h"
+#include "SortAlgo.h"
 
 class LeftAlgo : public SortAlgorithm {
 public:
