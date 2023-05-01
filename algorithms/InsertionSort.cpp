@@ -1,4 +1,4 @@
-#include "LIS.h"
+#include "InsertionSort.h"
 #include "Utils.h"
 #include <algorithm>
 #include <iostream>
@@ -7,7 +7,7 @@ using namespace std;
 
 
 
-std::vector<int> LIS::sort(SortGame &game)
+std::vector<int> InsertionSort::sort(SortGame &game)
 {
     int n = game.getSize();
     vector<int> preds = game.getPreds();
@@ -18,17 +18,11 @@ std::vector<int> LIS::sort(SortGame &game)
         p_to_A[uni_preds[i]] = i;
 
     vector<int> sorted;
-    int finger = -1;
-    for (int index = 0; index < n; index ++) {
+    for (int index = 0; index < n; index++)
+    {
+        int finger = sorted.size() - 1;
+        
         int i_in_A = p_to_A[index];
-        // cerr << "sorted at index = " << index << endl;
-        // for (int i = 0; i < sorted.size(); i++)
-        //     cerr << sorted[i] << " ";
-        // cerr << endl;
-        
-        
-        // if (finger != -1)
-        //     cerr << "finger = " << finger << " i is small?" << game.compare(i_in_A, sorted[finger]) << endl;
         if (finger == -1) {
             sorted.push_back(i_in_A);
             finger = 0;
@@ -69,6 +63,7 @@ std::vector<int> LIS::sort(SortGame &game)
                 finger = sorted.size() - 1;
                 continue;
             }
+
             int gap = 1;
             while (finger + gap < sorted.size() && game.compare(sorted[finger + gap], i_in_A))
                 gap <<= 1;
@@ -93,7 +88,6 @@ std::vector<int> LIS::sort(SortGame &game)
             // cerr << "case 4 " << finger << " " << min((int)sorted.size() - 1, finger + gap) << " > " << ed << endl;
             finger = ed;
         }
-        
     }
     // cerr << "final" << endl;
     // for (int i = 0; i < sorted.size(); i++)

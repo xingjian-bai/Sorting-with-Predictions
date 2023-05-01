@@ -10,10 +10,10 @@ std::vector<int> QuickSort::sort(SortGame &game) {
     for (int i = 0; i < n; i++)
         indexes[uni_preds[i]] = i;
     
-    cerr << n << "indexes: ";
-    for (int i = 0; i < n; i++)
-        cerr << indexes[i] << " ";
-    cerr << endl;
+    // cerr << n << " indexes: ";
+    // for (int i = 0; i < n; i++)
+    //     cerr << indexes[i] << " ";
+    // cerr << endl;
 
     quickSort(game, 0, n - 1, indexes);
     

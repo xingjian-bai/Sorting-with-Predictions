@@ -20,6 +20,8 @@ std::vector<int> BothAlgo::sort(SortGame &game)
     }
 
     vector<int> left, right;
+    vector <int> left_bef, left_aft;
+    vector <int> right_bef, right_aft;
     // cerr counter
     // cerr << "init counter = " << game.counter() << endl;
     for (int delta = 1; delta / 2 <= n; delta <<= 1) {
@@ -28,7 +30,8 @@ std::vector<int> BothAlgo::sort(SortGame &game)
             if (inserted[i])    continue;
             int A_i = p_to_A[i];
 
-            vector <int> left_bef, left_aft;
+            left_bef.resize(0);
+            left_aft.resize(0);
             for (int j = 0; j < left.size(); j++)
             {
                 if (left[j] < i)    left_bef.push_back(left[j]);
@@ -65,7 +68,8 @@ std::vector<int> BothAlgo::sort(SortGame &game)
             if (inserted[i])    continue;
             int A_i = p_to_A[i];
 
-            vector <int> right_bef, right_aft;
+            right_bef.resize(0);
+            right_aft.resize(0);
             for (int j = 0; j < right.size(); j++)
             {
                 if (right[j] < i)    right_bef.push_back(right[j]);

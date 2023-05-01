@@ -15,7 +15,9 @@ vector<int> TimSort::sort(SortGame& game) {
     for (int i = 0; i < n; i++)
         indexes[uni_preds[i]] = i;
 
+    // cerr << "bef sort" << endl;
     timSort(game, n, indexes);
+    // cerr << "aft sort" << endl;
 
     return index_to_rank(indexes);
 }
@@ -75,12 +77,18 @@ void TimSort::timSort(SortGame& game, int n, std::vector<int>& indexes) {
     for (int i = 0; i < n; i += RUN) {
         insertionSort(game, i, std::min(i + RUN - 1, n - 1), indexes);
     }
+    // cerr << "aft insertion sort" << endl;
 
     // Merge the sorted subarrays
     for (int size = RUN; size < n; size = 2 * size) {
         for (int left = 0; left < n; left += 2 * size) {
             int mid = left + size - 1;
             int right = std::min(left + 2 * size - 1, n - 1);
+
+            // if right is empty
+            if (mid >= right) {
+                continue;
+            }
 
             // Merge the two subarrays
             merge(game, left, mid, right, indexes);

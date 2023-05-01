@@ -15,33 +15,43 @@ vector<int> generateRandomPermutation(int size) {
     return permutation;
 }
 
+void SortGame::init() {
+    A.resize(0);
+    preds.resize(0);
+    ranking.resize(0);
+}
+
 SortGame::SortGame() {
     SortGame(10);
 }
 SortGame::SortGame(int size) {
-    // 初始化随机数生成器
-    std::mt19937 gen(static_cast<unsigned>(std::time(nullptr)));
-    std::uniform_int_distribution<> dist(1, 100);
-
-    // 生成大小为size的A和preds排列
-    A = generateRandomPermutation(size);
-    preds = generateRandomPermutation(size);
-    // 计算rank数组
-    rank = A;
+    for (int i = 0; i < size; i++) {
+        A.push_back(i);
+        ranking.push_back(i);
+        preds.push_back(size - i - 1);
+    }
 }
 
 int SortGame::getSize() const {
-    return static_cast<int>(A.size());
+    return A.size();
 }
 
 bool SortGame::compare(int i, int j) {
     cmp_counter++;
+    // if (A[i] == A[j]) {
+    //     cerr << i << " " << j << " " << "equal, fucked up" << endl;
+    //     exit(1);
+    // }
+    // if ((A[i] < A[j]) != (ranking[i] < ranking[j])) {
+    //     cerr << "inconsistancy " << i << " " << j << " " << A[i] << " " << A[j] << " " << ranking[i] << " " << ranking[j] << endl;
+    //     exit(1);
+    // }
     // cerr << "comparing " << A[i] << " and " << A[j] << endl;
-    return A[i] < A[j];
+    return ranking[i] < ranking[j];
 }
 
 bool SortGame::isSameAsRank(const std::vector<int>& input) const {
-    return input == rank;
+    return input == ranking;
 }
 
 const std::vector<int>& SortGame::getPreds() const {
@@ -51,7 +61,7 @@ const std::vector<int>& SortGame::getPreds() const {
 double SortGame::eta_diff() const {
     double sum = 0;
     for (int i = 0; i < getSize(); ++i) {
-        sum += std::log2(std::abs(preds[i] - rank[i]) + 1);
+        sum += std::log2(std::abs(preds[i] - ranking[i]) + 1);
     }
     return sum;
 }
@@ -61,7 +71,7 @@ double SortGame::eta_left() const {
     for (int i = 0; i < getSize(); ++i) {
         int count = 0;
         for (int j = 0; j < getSize(); ++j) {
-            if (A[j] > A[i] && preds[j] < preds[i]) {
+            if (ranking[j] > ranking[i] && preds[j] < preds[i]) {
                 count++;
             }
         }
@@ -77,7 +87,7 @@ double SortGame::eta_right() const {
     for (int i = 0; i < getSize(); ++i) {
         int count = 0;
         for (int j = 0; j < getSize(); ++j) {
-            if (A[j] < A[i] && preds[j] > preds[i]) {
+            if (ranking[j] < ranking[i] && preds[j] > preds[i]) {
                 count++;
             }
         }
@@ -92,10 +102,10 @@ double SortGame::eta_min() const {
     for (int i = 0; i < getSize(); ++i) {
         int count1 = 0, count2 = 0;
         for (int j = 0; j < getSize(); ++j) {
-            if (A[j] > A[i] && preds[j] < preds[i]) {
+            if (ranking[j] > ranking[i] && preds[j] < preds[i]) {
                 count1++;
             }
-            if (A[j] < A[i] && preds[j] > preds[i]) {
+            if (ranking[j] < ranking[i] && preds[j] > preds[i]) {
                 count2++;
             }
         }
@@ -116,7 +126,7 @@ void SortGame::summary() {
 void SortGame::output_rank()
 {
     for (int i = 0; i < getSize(); ++i) {
-        cout << rank[i] << " ";
+        cout << A[i] << " ";
     }
     cout << endl;
 }
@@ -124,6 +134,18 @@ void SortGame::output_rank()
 void SortGame::print() {
     cerr << "index, rank, pred" << endl;
     for (int i = 0; i < getSize(); ++i) {
-        cerr << "A_" << i << "=" << rank[i] << ",p=" << preds[i] << endl;
+        cerr << i << ": " << A[i] << ", " << ranking[i] << ", " << preds[i] << endl;
+    }
+}
+
+void SortGame::calculateRank() {
+    ranking.resize(getSize());
+    vector<pair<ll, int>> tmp;
+    for (int i = 0; i < getSize(); ++i) {
+        tmp.push_back(make_pair(A[i], i));
+    }
+    sort(tmp.begin(), tmp.end());
+    for (int i = 0; i < getSize(); ++i) {
+        ranking[tmp[i].second] = i;
     }
 }

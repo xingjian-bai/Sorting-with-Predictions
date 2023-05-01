@@ -2,6 +2,12 @@
 #include <vector>
 #include <iostream>
 using namespace std;
+typedef long long ll;
+
+extern std::vector<ll> A;         // 数字数组
+extern std::vector<int> preds;     // 预测排名数组
+extern std::vector<int> ranking;      // 真实排名数组
+
 class SortGame {
 public:
     SortGame(); 
@@ -24,12 +30,8 @@ public:
     void print();
     void summary();
     void output_rank();
-
-private:
-    std::vector<int> A;         // 数字数组
-    std::vector<int> preds;     // 预测排名数组
-    std::vector<int> rank;      // 真实排名数组
+    void init();
+    
     int cmp_counter = 0;        // 比较计数器
-
     void calculateRank();       // 计算rank数组
 };

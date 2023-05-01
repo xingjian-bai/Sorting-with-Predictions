@@ -1,6 +1,7 @@
-g++ -std=c++11 -O2 main.cpp \
+g++ -std=c++17 -O3 \
+ main.cpp \
  settings/Interface.cpp \
- settings/BadObject.cpp \
+ settings/settings.cpp \
  SortController.cpp \
  algorithms/Left.cpp \
  algorithms/Both.cpp \
@@ -11,6 +12,7 @@ g++ -std=c++11 -O2 main.cpp \
  algorithms/HeapSort.cpp \
  algorithms/TimSort.cpp \
  algorithms/BlockMergeSort.cpp \
+ algorithms/InsertionSort.cpp \
  -o main
 
 ./main
