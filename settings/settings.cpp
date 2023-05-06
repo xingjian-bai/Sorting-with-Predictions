@@ -137,3 +137,58 @@ void decayobject(SortGame *game, int size, double decay) {
             // }
         }
 }
+
+void defaultrelation(SortGame *game, int size) {
+    game->init();
+
+    for (int i = 0; i < size; i++) {
+        A.push_back(i);
+        ranking.push_back(i);
+    }
+    for (int i = 0; i < size; i++) {
+        vector <bool> rel_i(size, false);
+        for (int j = i + 1; j < size; j ++)
+            rel_i[j] = (ranking[i] < ranking[j]);
+        rel.push_back(rel_i);
+    }
+}
+
+
+
+void Goodbadrelation(SortGame *game, int size, double ratio) {
+    defaultrelation(game, size);
+
+    bool ifBad[size];
+    
+    for (int i = 0; i < A.size(); i++)
+        ifBad[i] = (random01() <= ratio);
+    
+    for (int i = 0; i < A.size(); i++)
+        for (int j = i + 1; j < A.size(); j++)
+            if (ifBad[i] && ifBad[j]) {
+                bool R = (random01() <= 0.5);
+                rel[i][j] = R;
+                rel[j][i] = !R;
+            }
+    game->ReltoRank();
+}
+
+void Badgoodrelation(SortGame *game, int size, double ratio) {
+    defaultrelation(game, size);
+
+    bool ifBad[size];
+    
+    for (int i = 0; i < A.size(); i++)
+        ifBad[i] = (random01() <= ratio);
+    
+    for (int i = 0; i < A.size(); i++) {
+        for (int j = i + 1; j < A.size(); j++)
+            if (ifBad[i] || ifBad[j]) {
+                bool R = (random01() <= 0.5);
+                rel[i][j] = R;
+                rel[j][i] = !R;
+            }
+        ranking[i] = A[i] = i;
+    }
+    game->ReltoRank();
+}

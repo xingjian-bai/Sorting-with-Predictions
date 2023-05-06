@@ -12,7 +12,9 @@ g++ -std=c++17 -O3 \
  algorithms/HeapSort.cpp \
  algorithms/TimSort.cpp \
  algorithms/BlockMergeSort.cpp \
+ algorithms/AdaptiveMergeSort.cpp \
  algorithms/InsertionSort.cpp \
+ algorithms/DirtyClean.cpp \
+ algorithms/naiveDirtyClean.cpp \
+ algorithms/DirtyClean2.cpp \
  -o main
-
-./main

@@ -7,7 +7,7 @@ class SortController {
 public:
     SortController(SortGame* game);
     void addAlgorithm(SortAlgorithm* algorithm, string name);
-    vector<int> runGame();
+    vector<int> runGame(bool verbose = true);
 
 private:
     SortGame* game;

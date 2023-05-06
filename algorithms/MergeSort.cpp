@@ -1,4 +1,4 @@
-#include "MergeSort.h"
+#include "SortAlgo.h"
 #include "Utils.h"
 
 std::vector<int> MergeSort::sort(SortGame& game) {

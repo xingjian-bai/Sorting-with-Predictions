@@ -1,4 +1,4 @@
-#include "HeapSort.h"
+#include "SortAlgo.h"
 #include "Utils.h"
 
 std::vector<int> HeapSort::sort(SortGame& game) {

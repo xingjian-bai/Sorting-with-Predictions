@@ -1,4 +1,4 @@
-#include "QuickSort.h"
+#include "SortAlgo.h"
 #include "Utils.h"
 
 std::vector<int> QuickSort::sort(SortGame &game) {
@@ -7,6 +7,7 @@ std::vector<int> QuickSort::sort(SortGame &game) {
     vector<int> uni_preds = new_pred(preds); // 重排preds，使得preds中的数字连续
     
     vector<int> indexes(n);
+
     for (int i = 0; i < n; i++)
         indexes[uni_preds[i]] = i;
     
