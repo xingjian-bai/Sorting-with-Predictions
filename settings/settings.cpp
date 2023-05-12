@@ -78,7 +78,7 @@ void worstobject(SortGame *game, int size) {
 
 
 void defaultobject(SortGame *game, int size) {
-    mt19937 gen(static_cast<unsigned>(time(nullptr)));
+    // mt19937 gen(static_cast<unsigned>(time(nullptr)));
     game->init();
 
     vector<int> root[size];
@@ -115,16 +115,30 @@ void countrypopulation(SortGame *game, int old) {
     game->RanktoRel();
 }
 
+void localshuffleobject(SortGame *game, int size, int seg) {
+    defaultobject(game, size);
+
+    segs.resize(0);
+    for (int i = 0; i < seg; i ++)
+        segs.push_back(rand() % size);
+    sort(segs.begin(), segs.end());
+
+    for (int i = 0; i <= segs.size(); i++) {
+        int st = (i ? segs[i - 1] : 0);
+        int ed = (i == segs.size() ? size : segs[i]);
+
+        for (int j = st; j < ed; j++) {
+            preds[j] = st + rand() % (ed - st);
+        }
+    }
+
+    game->RanktoRel();
+}
+
 
 
 void decayobject(SortGame *game, int size, double decay) {
-    game->init();
-
-    for (int i = 0; i < size; i++) {
-        A.push_back(i);
-        ranking.push_back(i);
-        preds.push_back(i);
-    }
+    defaultobject(game, size);
 
     double ratio = log(size) / size;
     // cerr << "error ratio: " << ratio << endl;
@@ -144,13 +158,7 @@ void decayobject(SortGame *game, int size, double decay) {
 }
 
 void decayobject2(SortGame *game, int size, double decay) {
-    game->init();
-
-    for (int i = 0; i < size; i++) {
-        A.push_back(i);
-        ranking.push_back(i);
-        preds.push_back(i);
-    }
+    defaultobject(game, size);
 
     // double ratio = log(size) / size;
     // cerr << "error ratio: " << ratio << endl;
@@ -185,10 +193,25 @@ void defaultrelation(SortGame *game, int size) {
     for (int i = 0; i < size; i++) {
         vector <bool> rel_i(size, false);
         for (int j = i + 1; j < size; j ++)
-            rel_i[j] = (ranking[i] < ranking[j]);
+            rel_i[j] = 1;
         rel.push_back(rel_i);
     }
+    game->ReltoRank();
+}
 
+void inverserelation(SortGame *game, int size) {
+    game->init();
+
+    for (int i = 0; i < size; i++) {
+        A.push_back(i);
+        ranking.push_back(i);
+    }
+    for (int i = 0; i < size; i++) {
+        vector <bool> rel_i(size, false);
+        for (int j = 0; j < i; j ++)
+            rel_i[j] = 1;
+        rel.push_back(rel_i);
+    }
     game->ReltoRank();
 }
 

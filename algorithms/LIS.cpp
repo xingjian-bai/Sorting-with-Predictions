@@ -21,11 +21,13 @@ void LIS::sort(SortGame &game)
     ScapegoatTree scapegoat;
     Node *finger = nullptr;
 
-    Comp dirty = [&](int a, int b) {
+    Comp dirty = [&](int a, int b)
+    {
         bool result = game.compare(a, b);
         return result;
     };
-    Comp clean = [&](int a, int b) {
+    Comp clean = [&](int a, int b)
+    {
         // cerr << "clean compare " << a << " " << b << endl;
         bool result = game.compare(a, b);
         return result;
@@ -34,36 +36,24 @@ void LIS::sort(SortGame &game)
     for (int index = 0; index < n; index ++) {
         ll prev_cmp = game.counter();
         int ai = p_to_A[index];
-        // cerr << "inserting index: " << index << " ai: " << ai << endl;
 
         if (finger == nullptr) {
-            // cerr << "boom! " << endl;
             finger = scapegoat.root = new Node(ai);
             continue;
         }
-        // cerr << "init finger value" << finger->value << endl;
 
         bool leftInclude = (finger->st == -inf) || game.compare(finger->st, ai);
         bool rightInclude = (finger->ed == inf) || game.compare(ai, finger->ed);
 
-        // cerr << "mid finger value" << finger->value << endl;
-
 
         while (!leftInclude || !rightInclude)
         {
-            
-            // cerr << "check finger: " << finger->value << " " << finger->st << " " << finger->ed << " " << ai << " " << leftInclude << " " << rightInclude << endl;
             finger = finger->parent;
             if (finger == nullptr)
-            {
-                // cerr << "finger is null, done" << endl;
                 assert(false);
-            }
-
             leftInclude |= (finger->st == -inf) || game.compare(finger->st, ai);
             rightInclude |= (finger->ed == inf) || game.compare(ai, finger->ed);
         }
-        // cerr << "reach finger value/st/ed" << finger->value << " " << finger->st << " " << finger->ed << endl;
 
         Comp dirty = [&](int a, int b)
         {
@@ -88,15 +78,8 @@ void LIS::sort(SortGame &game)
             return false;
         };
         finger = scapegoat.insert(ai, dirty, clean, finger->value);
-        // cerr << "after insert " << ai << ", now have finger " << finger->value << " with st and ed " << finger->st << " " << finger->ed << endl;
-        // treap.LinearPrint(treap.root);
     }
-    // cerr << "final" << endl;
-    // for (int i = 0; i < sorted.size(); i++)
-    //     cerr << sorted[i] << " ";
-    // cerr << endl;
-    
     scapegoat.LinearOutput(&indexes);
     index_to_rank();
-}
+};
 

@@ -30,13 +30,19 @@ vector<int> ordered, unordered1, unordered2;
 
 // for Both
 vector<int> p_to_A, inserted;
-vector<int> left_sorted, right_sorted, left_bef, right_aft, combine;
+vector<int> left_sorted, right_sorted, left_bef, right_aft, insert_par;
+vector<int> left_order, right_order, left_weight, right_weight, combine;
+
+vector<Node *> ai_to_node;
 
 // for DirtyClean2
 vector<int> shuffledA;
 
 // for ScapegoatTree
 vector<Node*> nodes;
+
+// for localshuffle
+vector<int> segs;
 
 vector<vector<ll>> results;
 
@@ -51,6 +57,9 @@ vector <string> names{
     "LIS",
     "LIS_small",
     "LIS_treap",
+
+    // "BothAlgo"
+    "BothAlgo_small"
 };
 //, "Both"};  //, "naiveDirtyClean2"};
 vector <SortAlgorithm*> algos {
@@ -63,6 +72,10 @@ vector <SortAlgorithm*> algos {
 
     new LIS(),
     new LIS_small(),
+    new LIS_treap(),
+
+    // new BothAlgo(),
+    new BothAlgo_small()
 };
 //, new BothAlgo()}; //, new naiveDirtyClean2()}
 
@@ -84,6 +97,8 @@ void main_objects(int n, int REP, string setting)
 
             if (setting == "exact")
                 defaultrelation(game, n);
+            else if (setting == "worst")
+                worstobject(game, n);
             else if (setting == "bad")
                 badobject(game, n, error_rate);
             else if (setting == "permute")
@@ -92,15 +107,20 @@ void main_objects(int n, int REP, string setting)
                 decayobject(game, n, error_rate);
             else if (setting == "decay2")
                 decayobject2(game, n, error_rate);
-            else
-            {
-                cerr << "wrong setting" << endl;
-                exit(0);
+            else if (setting == "local") {
+                int seg = error_rate * n;
+                localshuffleobject(game, n, seg);
+            }
+            else {
+                    cerr << "wrong setting" << endl;
+                    exit(0);
             }
             // badobject(game, n, error_rate);
             // permutseobject(game, n, error_rate);
             // decayobject(game, n, error_rate);
             // worstobject(game, n);
+            
+            // defaultrelation(game, n);
 
             SortController controller(game);
             for (int i = 0; i < num_algo; i++)
@@ -146,11 +166,11 @@ void main2()
 void main_relational(int n, int REP, string setting)
 {
     int num_algo = algos.size();
-    for (int error = 0; error / 2 < n; error = max(error * 2, error + 1))
+    int gap = 20;
+    for (int i = 0; i <= gap; i++)
     {
         double start_time = get_time();
-        double error_rate = error / (double)n;
-        error = min(error, n);
+        double error_rate = i / (double)gap;
 
         vector<ll> result(num_algo, 0);
         for (int i = 0; i < REP; i++)
@@ -158,6 +178,10 @@ void main_relational(int n, int REP, string setting)
             SortGame *game = new SortGame();
             if (setting == "goodbad" || setting == "gb")
                 Goodbadrelation(game, n, error_rate);
+            else if (setting == "inverse")
+                inverserelation(game, n);
+            else if (setting == "good")
+                defaultrelation(game, n);
             else if (setting == "badgood" || setting == "bg")
                 Badgoodrelation(game, n, error_rate);
             else if (setting == "prod")
@@ -192,7 +216,7 @@ void main_relational(int n, int REP, string setting)
         //  for (int i = 0; i < num_algo; i++)
         //      cerr << result[i] << " ";
         //  cerr << endl;
-        cerr << "finished error = " << error << " time spend: " << get_time() - start_time << endl;
+        cerr << "finished error = " << error_rate << " time spend: " << get_time() - start_time << endl;
     }
 }
 

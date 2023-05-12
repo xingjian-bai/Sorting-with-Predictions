@@ -24,10 +24,10 @@ pair<vector<ll>, vector<ll>> parsePopulationData(const std::string &filename, in
 vector<vector<bool>> parseTennisRelation(const string &filename, int size);
 
 struct Node {
-    int value, priority, st, ed, depth;
+    int value, priority, st, ed, depth, size;
     Node *left, *right, *parent;
 
-    Node(int value) : value(value), priority(rand()), st(-inf), ed(inf), left(nullptr), right(nullptr), parent(nullptr), depth(1) {}
+    Node(int value) : value(value), priority(rand()), st(-inf), ed(inf), left(nullptr), right(nullptr), parent(nullptr), depth(1), size(1) {}
 };
 
 
@@ -264,6 +264,30 @@ public:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 extern vector<Node*> nodes;
 class ScapegoatTree {
 public:
@@ -271,9 +295,15 @@ public:
 
     Node* insert(int value, const function<bool(int, int)>& dirty, const function<bool(int, int)>& clean, int target = -1) {
         Node *newNode;
-        tie(root, newNode) = insert(root, value, -inf, inf, dirty, clean, false, target);
+        tie(root, newNode) = insert(root, value, -inf, inf, dirty, clean, false, target, false);
         return newNode;
     }
+    Node* freeze_insert(int value, const function<bool(int, int)>& dirty, const function<bool(int, int)>& clean, int target = -1) {
+        Node *newNode;
+        tie(root, newNode) = insert(root, value, -inf, inf, dirty, clean, false, target, true);
+        return newNode;
+    }
+    
 
     Node *root, *rightmost;
 
@@ -283,7 +313,13 @@ public:
         return node->depth;
     }
 
-    const double ALPHA = 1.5;
+    int getSize(Node *node) {
+        if (node == nullptr)
+            return 0;
+        return node->size;
+    }
+
+    const double ALPHA = 1.05;
     bool isScapegoat(Node *node) {
         if (!node || !node->parent) return false;
         double large = max(getDepth(node->parent->left), getDepth(node->parent->right));
@@ -292,11 +328,13 @@ public:
     }
 
 
-    pair<Node*, Node*> insert(Node *node, int value, int st, int ed, const function<bool(int, int)>& dirty, const function<bool(int, int)>& clean, bool isClean, int target) {
+    pair<Node*, Node*> insert(Node *node, int value, int st, int ed, const function<bool(int, int)>& dirty, const function<bool(int, int)>& clean, bool isClean, int target, bool isFreeze) {
+        // cerr << "in insert" << endl;
         if (node == nullptr) {
             Node *newNode = new Node(value);
             newNode->st = st;
             newNode->ed = ed;
+            // cerr << "in nullptr, completed insert" << endl;
             return make_pair(newNode, newNode);
         }
 
@@ -309,16 +347,17 @@ public:
 
         Node *newNode;
         if (comp(value, node->value)) {
-            tie(node->left, newNode) = insert(node->left, value, st, node->value, dirty, clean, isClean, target);
+            tie(node->left, newNode) = insert(node->left, value, st, node->value, dirty, clean, isClean, target, isFreeze);
             node->left->parent = node;
         } else {
-            tie(node->right, newNode) = insert(node->right, value, node->value, ed, dirty, clean, isClean, target);
+            tie(node->right, newNode) = insert(node->right, value, node->value, ed, dirty, clean, isClean, target, isFreeze);
             node->right->parent = node;
         }
 
         node->depth = max(getDepth(node->left), getDepth(node->right)) + 1;
+        node->size = getSize(node->left) + getSize(node->right) + 1;
 
-        if (isScapegoat(node)) {
+        if (!isFreeze && isScapegoat(node)) {
             node = rebuild(node);
             updateAncestors(node);
         }
@@ -333,8 +372,12 @@ public:
     Node* rebuild(Node *node) {
         if (!node) return nullptr;
         nodes.resize(0);
+        
         flatten(node, nodes);
-        Node *new_root = buildBalanced(nodes, 0, nodes.size() - 1);
+        Node *par = node->parent;
+        int st = node->st, ed = node->ed;
+        Node *new_root = buildBalanced(nodes, 0, nodes.size() - 1, st, ed);
+        new_root->parent = par;
         
         return new_root;
     }
@@ -345,25 +388,32 @@ public:
         nodes.push_back(node);
         flatten(node->right, nodes);
         node->left = node->right = nullptr;
+        node->depth = node->size = 1;
     }
 
-    Node* buildBalanced(vector<Node*>& nodes, int l, int r) {
+    Node* buildBalanced(vector<Node*>& nodes, int l, int r, int st, int ed) {
         if (l > r) return nullptr;
         int mid = (l + r) / 2;
         Node *root = nodes[mid];
-        root->left = buildBalanced(nodes, l, mid - 1);
+        root->st = st;
+        root->ed = ed;
+        root->left = buildBalanced(nodes, l, mid - 1, st, root->value);
         if (root->left) root->left->parent = root;
-        root->right = buildBalanced(nodes, mid + 1, r);
+        root->right = buildBalanced(nodes, mid + 1, r, root->value, ed);
         if (root->right) root->right->parent = root;
+
         root->depth = max(getDepth(root->left), getDepth(root->right)) + 1;
+        root->size = getSize(root->left) + getSize(root->right) + 1;
         return root;
     }
 
     void updateAncestors(Node *node) {
         if (!node)
             return;
+        // cerr << "updateAncestors " << node->value << endl;
         if (node->parent) {
             node->parent->depth = max(getDepth(node->parent->left), getDepth(node->parent->right)) + 1;
+            node->parent->size = getSize(node->parent->left) + getSize(node->parent->right) + 1;
             updateAncestors(node->parent);
         }
     }
@@ -374,5 +424,98 @@ public:
         LinearOutput(node->left, ranking);
         ranking->push_back(node->value);
         LinearOutput(node->right, ranking);
+    }
+
+    static void LinearPrint(const Node *node) {
+        if (node == nullptr) return;
+        LinearPrint(node->left);
+        cerr << node->value << " " << node->st << " " << node->ed << " par=" << (node->parent == nullptr ? -1 : node->parent->value) << endl;
+        LinearPrint(node->right);
+    }
+
+    Node *find_kth_smallest(Node *node, int k) {
+        if (node == nullptr) return nullptr;
+        int left_size = getSize(node->left);
+        if (left_size == k - 1) return node;
+        if (left_size >= k) return find_kth_smallest(node->left, k);
+        return find_kth_smallest(node->right, k - left_size - 1);
+    }
+
+    Node *find_kth_largest(Node *node, int k) {
+        if (node == nullptr) return nullptr;
+        int right_size = getSize(node->right);
+        if (right_size == k - 1) return node;
+        if (right_size >= k) return find_kth_largest(node->right, k);
+        return find_kth_largest(node->left, k - right_size - 1);
+    }
+
+    Node*find_largest_small(Node *node, int value, const Comp &comp) {
+        if (node == nullptr) return nullptr;
+        if (comp(node->value, value)) {
+            Node *res = find_largest_small(node->right, value, comp);
+            if (res) return res;
+            return node;
+        }
+        return find_largest_small(node->left, value, comp);
+    }
+
+    Node *merge(Node *left, Node *right) {
+        if (left == nullptr) return right;
+        if (right == nullptr) return left;
+        if (left->depth > right->depth) {
+            left->right = merge(left->right, right);
+            left->right->parent = left;
+            left->depth = max(getDepth(left->left), getDepth(left->right)) + 1;
+            left->size = getSize(left->left) + getSize(left->right) + 1;
+            return left;
+        } else {
+            right->left = merge(left, right->left);
+            right->left->parent = right;
+            right->depth = max(getDepth(right->left), getDepth(right->right)) + 1;
+            right->size = getSize(right->left) + getSize(right->right) + 1;
+            return right;
+        }
+    }
+
+    void del(Node * r) {
+        if (r == root) {
+            root = merge(root->left, root->right);
+            return ;
+        }
+        Node *p = r->parent;
+        if (p->left == r) {
+            p->left = merge(r->left, r->right);
+            if (p->left) p->left->parent = p;
+        } else {
+            p->right = merge(r->left, r->right);
+            if (p->right) p->right->parent = p;
+        }
+    }
+
+    Node *getLCA(Node *x, Node *y) {
+        if (x == y) return x;
+        if (x->size < y->size) swap(x, y);
+        return getLCA(x, y->parent);
+    }
+
+    bool compare(Node *x, Node *y) {
+        assert(x != y);
+        if (x == nullptr || y == nullptr)
+            return false;
+        Node *lca = getLCA(x, y);
+        if (lca == x) {
+            while (y != lca->left && y != lca->right)
+                y = y->parent;
+            if (y == lca->left)
+                return false;
+            else 
+                return true;
+        }
+        while (x != lca->left && x != lca->right)
+            x = x->parent;
+        if (x == lca->left)
+            return true;
+        else 
+            return false;
     }
 };

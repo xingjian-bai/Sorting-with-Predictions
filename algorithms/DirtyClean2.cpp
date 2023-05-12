@@ -20,11 +20,13 @@ void DirtyClean2::sort(SortGame &game)
 {
     vector <Node*> path;
     map <pair<int, int>, bool> dirty_records, clean_records;
-    Treap treap;
-    Comp dirty = [&](int a, int b) {
+    // Treap treap;
+    ScapegoatTree tree;
+    Comp dirty = [&](int a, int b)
+    {
+        // cerr << "dirty compare " << a << " " << b << endl;
         if (dirty_records.count(make_pair(a, b)))
             return dirty_records[make_pair(a, b)];
-        // cerr << "dirty compare " << a << " " << b << endl;
         bool result = game.dirtyCompare(a, b);
         dirty_records[make_pair(a, b)] = result;
         dirty_records[make_pair(b, a)] = !result;
@@ -43,14 +45,18 @@ void DirtyClean2::sort(SortGame &game)
 
     auto insertElement = [&](int ai) {
         // cerr << "insert " << ai << endl;
-        Node* p1 = treap.insert(ai, dirty, clean);
+        // Node* p1 = tree.insert(ai, dirty, clean);
+        Node* p1 = tree.freeze_insert(ai, dirty, clean);
+        // cerr << "<<<<<<insert1<<<<<<" << " " << ai << endl;
+        // tree.LinearPrint(tree.root);
+        // cerr << "<<<<<<<<<<<<" << endl;
         // cerr << "inserted " << ai << endl;
         Node* p1_copy = p1, * p1_up = p1;
 
         path.resize(0);
         while (p1_up != nullptr) {
             // cerr << "if null" << (p1_up == nullptr) << endl;
-            // cerr << "p1_up: " << p1_up->st << " " << p1_up->ed << endl;
+            // cerr << "p1_up: " << p1_up->value << " - " << p1_up->st << " " << p1_up->ed << endl;
             path.push_back(p1_up);
             p1_up = p1_up->parent;
         }
@@ -66,6 +72,7 @@ void DirtyClean2::sort(SortGame &game)
         // cerr << "path size: " << path.size() << endl;
         while (!leftInclude || !rightInclude)
         {
+            // cerr << " ?? " << st << " " << ed << endl;
             st = ed;
             ed = min((int)path.size() - 1, max(ed + 1, ed * 2));
             Node * tg = path[ed];
@@ -116,13 +123,21 @@ void DirtyClean2::sort(SortGame &game)
         Node *turn = path[ed];
 
         if (turn->value == ai)    return;
-        
-        treap.deleteNode(p1_copy);
-        Node* p2 = treap.insert(ai, dirty, clean, turn->value);
+        // cerr << "needed to del and re insert " << ai << endl;
+        tree.del(p1_copy);
+        // cerr << "<<<<<<del<<<<<<" << " " << ai <<  endl;
+        // tree.LinearPrint(tree.root);
+        // cerr << "<<<<<<<<<<<<" << endl;
+        Node* p2 = tree.insert(ai, dirty, clean, turn->value);
 
+        // cerr << "<<<<<insert2<<<<<<<" << " " << ai <<  endl;
+        // tree.LinearPrint(tree.root);
+        // cerr << "<<<<<<<<<<<<" << endl;
+
+        // cerr << "finished del and re insert " << ai << endl;
         // turn->priority = -inf + rand() % (2 * inf);
-        turn->priority = rand() - inf;
-        treap.rebalance(turn);
+        // turn->priority = rand() - inf;
+        // treap.rebalance(turn);
     };
 
     int n = game.getSize();
@@ -137,16 +152,11 @@ void DirtyClean2::sort(SortGame &game)
     // for (int ai = 0; ai < n; ++ai)
         insertElement(ai);
         
-        indexes.resize(0);
-        treap.LinearOutput(&indexes);
-        // cerr << "indexes" << endl;
-        //     for (int i = 0; i < indexes.size(); ++i)
-        //         cerr << indexes[i] << " ";
-        //     cerr << endl;
+        
     }
 
     indexes.resize(0);
-    treap.LinearOutput(&indexes);
+    tree.LinearOutput(&indexes);
 
     // cerr << "indexes final" << endl;
     // for (int i = 0; i < indexes.size(); ++i)

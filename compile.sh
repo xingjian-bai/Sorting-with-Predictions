@@ -4,7 +4,6 @@ g++ -std=c++17 -O3 \
  settings/settings.cpp \
  SortController.cpp \
  algorithms/Utils.cpp \
- algorithms/Both.cpp \
  algorithms/Both_small.cpp \
  algorithms/LIS.cpp \
  algorithms/LIS_small.cpp \
@@ -18,6 +17,11 @@ g++ -std=c++17 -O3 \
  algorithms/OESM.cpp \
  algorithms/Cook_Kim.cpp \
  -o main
+
+#  algorithms/Both.cpp \
+
+
+
 
 
 #  algorithms/Left.cpp \

@@ -28,7 +28,11 @@ def plot_data(names, data, n, signature, exclude = [], target = []):
 
     plt.ylabel('# comparisons')
     plt.title(signature)
-    plt.legend()
+
+    #legend smaller
+    plt.legend(prop={'size': 10})
+
+    plt.rcParams["figure.figsize"] = (8, 6)
 
     plt.savefig(f"plots/{signature}.png")
     plt.show()
@@ -53,7 +57,7 @@ def read_data(signature):
 def experiment (type_pred, setting, n, rep, exclude = [], target = []):
     signature = f"{type_pred}_{setting}_{n}_{rep}"
     names, data = read_data(signature)
-    for (i, datum) in enumerate(data):
-        print(names[i], datum)
+    # for (i, datum) in enumerate(data):
+    #     print(names[i], datum)
     plot_data(names, data, n, signature, exclude, target)
     

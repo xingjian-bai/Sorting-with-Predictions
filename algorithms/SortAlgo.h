@@ -19,7 +19,9 @@ extern vector<int> ordered, unordered1, unordered2;
 
 //for Both
 extern vector<int> p_to_A, inserted;
-extern vector<int> left_sorted, right_sorted, left_bef, right_aft, combine;
+extern vector<int> left_sorted, right_sorted, left_bef, right_aft, combine, insert_par;
+extern vector<int> left_order, right_order, left_weight, right_weight;
+extern vector<Node *> ai_to_node;
 
 //for DirtyClean2
 extern vector<int> shuffledA;
