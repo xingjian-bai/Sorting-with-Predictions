@@ -7,38 +7,40 @@ using namespace std;
 
 
 
-std::vector<int> AdaptiveMergeSort::sort(SortGame &game)
+void LIS_small::sort(SortGame &game)
 {
+    // cerr << "fuck fuck " << endl;
+    // exit(0);
+    indexes.clear();
+    output_rank.clear();
+
     int n = game.getSize();
-    vector<int> preds = game.getPreds();
-    vector<int> uni_preds = new_pred(preds); // 重排preds，使得preds中的数字连续
-    // vector<int> uni_preds = preds;
-    int p_to_A[n];
+    new_pred();
+
+    p_to_A.resize(n);
     for (int i = 0; i < n; i++)
         p_to_A[uni_preds[i]] = i;
 
-    vector<int> sorted;
-    for (int index = 0; index < n; index++)
-    {
-        int finger = sorted.size() - 1;
-        
+    
+    int finger = -1;
+    for (int index = 0; index < n; index ++) {
         int i_in_A = p_to_A[index];
         if (finger == -1) {
-            sorted.push_back(i_in_A);
+            indexes.push_back(i_in_A);
             finger = 0;
         } 
-        else if (game.compare(i_in_A, sorted[finger])) { // a[i] < a[sorted[finger]]
+        else if (game.compare(i_in_A, indexes[finger])) { // a[i] < a[sorted[finger]]
             int gap = 1;
-            while (finger - gap >= 0 && game.compare(i_in_A, sorted[finger - gap])) {
+            while (finger - gap >= 0 && game.compare(i_in_A, indexes[finger - gap])) {
                 // cerr << "i is smaller than index " << finger - gap << endl;
                 gap <<= 1;
             }
             int st = max(0, finger - gap);
             if (st == 0) {
                 // cerr << "case 1" << endl;
-                if (game.compare(i_in_A, sorted[0]))
+                if (game.compare(i_in_A, indexes[0]))
                 {
-                    sorted.insert(sorted.begin(), i_in_A);
+                    indexes.insert(indexes.begin(), i_in_A);
                     finger = 0;
                     continue;
                 }
@@ -48,31 +50,30 @@ std::vector<int> AdaptiveMergeSort::sort(SortGame &game)
             while (ed - st > 1)
             {
                 int mid = (st + ed) >> 1;
-                if (game.compare(i_in_A, sorted[mid]))   ed = mid;
+                if (game.compare(i_in_A, indexes[mid]))   ed = mid;
                 else                                st = mid;
             }
             // cerr << "case 2 " << max(0, finger - gap + 1) << " " << finger << " > " << ed << endl;
 
-            sorted.insert(sorted.begin() + ed, i_in_A);
+            indexes.insert(indexes.begin() + ed, i_in_A);
             finger = ed;
         }
         else { //a[i] > a[sorted[finger]]
             //special case if finger = sorted.size() - 1
-            if (finger == sorted.size() - 1) {
-                sorted.push_back(i_in_A);
-                finger = sorted.size() - 1;
+            if (finger == indexes.size() - 1) {
+                indexes.push_back(i_in_A);
+                finger = indexes.size() - 1;
                 continue;
             }
-
             int gap = 1;
-            while (finger + gap < sorted.size() && game.compare(sorted[finger + gap], i_in_A))
+            while (finger + gap < indexes.size() && game.compare(indexes[finger + gap], i_in_A))
                 gap <<= 1;
-            int ed = min((int)sorted.size() - 1, finger + gap);
-            if (ed == sorted.size() - 1) {
-                if (game.compare(sorted[sorted.size() - 1], i_in_A)) {
+            int ed = min((int)indexes.size() - 1, finger + gap);
+            if (ed == indexes.size() - 1) {
+                if (game.compare(indexes[indexes.size() - 1], i_in_A)) {
                     // cerr << "case 3 " << sorted.size() - 1 << endl;
-                    sorted.push_back(i_in_A);
-                    finger = sorted.size() - 1;
+                    indexes.push_back(i_in_A);
+                    finger = indexes.size() - 1;
                     continue;
                 }
             }
@@ -81,18 +82,14 @@ std::vector<int> AdaptiveMergeSort::sort(SortGame &game)
             while (ed - st > 1)
             {
                 int mid = (st + ed) >> 1;
-                if (game.compare(sorted[mid], i_in_A))   st = mid;
+                if (game.compare(indexes[mid], i_in_A))   st = mid;
                 else                                ed = mid;
             }
-            sorted.insert(sorted.begin() + ed, i_in_A);
+            indexes.insert(indexes.begin() + ed, i_in_A);
             // cerr << "case 4 " << finger << " " << min((int)sorted.size() - 1, finger + gap) << " > " << ed << endl;
             finger = ed;
         }
+        
     }
-    // cerr << "final" << endl;
-    // for (int i = 0; i < sorted.size(); i++)
-    //     cerr << sorted[i] << " ";
-    // cerr << endl;
-    return index_to_rank(sorted);
+    return index_to_rank();
 }
-

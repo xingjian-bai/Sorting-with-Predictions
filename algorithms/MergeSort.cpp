@@ -1,31 +1,31 @@
 #include "SortAlgo.h"
 #include "Utils.h"
 
-std::vector<int> MergeSort::sort(SortGame& game) {
+void MergeSort::sort(SortGame& game) {
     int n = game.getSize();
-    vector<int> preds = game.getPreds();
-    vector<int> uni_preds = new_pred(preds); // 重排preds，使得preds中的数字连续
+    new_pred();
     
-    vector<int> indexes(n);
+    indexes.resize(n);
     for (int i = 0; i < n; i++)
         indexes[uni_preds[i]] = i;
-    mergeSort(game, 0, n - 1, indexes);
+
+    mergeSort(game, 0, n - 1);
     
-    return index_to_rank(indexes);
+    return index_to_rank();
 }
 
 // Recursively divides the array into two halves, sorts them, and then merges the two sorted halves
-void MergeSort::mergeSort(SortGame& game, int low, int high, std::vector<int>& indexes) {
+void MergeSort::mergeSort(SortGame& game, int low, int high) {
     if (low < high) {
         int mid = low + (high - low) / 2;
-        mergeSort(game, low, mid, indexes);
-        mergeSort(game, mid + 1, high, indexes);
-        merge(game, low, mid, high, indexes);
+        mergeSort(game, low, mid);
+        mergeSort(game, mid + 1, high);
+        merge(game, low, mid, high);
     }
 }
 
 // Merges two sorted subarrays defined by their low, mid, and high indices
-void MergeSort::merge(SortGame& game, int low, int mid, int high, std::vector<int>& indexes) {
+void MergeSort::merge(SortGame& game, int low, int mid, int high) {
     int n1 = mid - low + 1;
     int n2 = high - mid;
     // Create temporary arrays for the two subarrays

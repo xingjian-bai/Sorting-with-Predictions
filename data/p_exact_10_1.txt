@@ -1,0 +1,9 @@
+MergeSort QuickSort TimSort BlockMergeSort OESM 
+19 19 19 19 19 
+23 21 31 23 23 
+9 9 9 9 9 
+9 9 9 9 9 
+9 9 9 9 9 
+9 9 9 9 9 
+13 15 15 14 14 
+

@@ -75,6 +75,11 @@
         "variant": "cpp",
         "algorithm": "cpp",
         "filesystem": "cpp",
-        "set": "cpp"
-    }
+        "set": "cpp",
+        "functional": "cpp"
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none"
 }

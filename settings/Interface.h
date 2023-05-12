@@ -1,13 +1,13 @@
 #pragma once
 #include <vector>
 #include <iostream>
+// #include "../algorithms/SortAlgo.h"
 using namespace std;
 typedef long long ll;
 
 extern std::vector<ll> A;         // 数字数组
 extern std::vector<int> preds;     // 预测排名数组
 extern std::vector<int> ranking;      // 真实排名数组
-
 extern std::vector<vector<bool>> rel; // 关系数组
 
 class SortGame {
@@ -21,8 +21,15 @@ public:
     }
     bool dirtyCompare(int i, int j) { return rel[i][j];}
 
-    bool isSameAsRank(const std::vector<int>& input) const {return input == ranking;}
-    const std::vector<int>& getPreds() const { return preds; }
+    //it takes a pointer to a vector
+    bool isSameAsRank(const std::vector<int>& v) const {
+        assert(v.size() == A.size());
+        for (int i = 0; i < A.size(); ++i) {
+            if (ranking[i] != v[i]) return false;
+        }
+        return true;
+    }
+
     int getSize() const { return A.size(); }
 
     double eta_diff() const;
@@ -31,7 +38,7 @@ public:
     double eta_min() const;
     double eta_dirty() const;
 
-    int counter() const { return cmp_counter; }
+    ll counter() const { return cmp_counter; }
     void clear_counter() { cmp_counter = 0; }
 
     void print() {
@@ -53,9 +60,10 @@ public:
     }
     // void summary();
     
-    int cmp_counter = 0;        // 比较计数器
+    ll cmp_counter = 0;        // 比较计数器
     void calculateRank();       // 计算rank数组
 
-    void ReltoRank();           // 将关系数组转化为rank数组
-    void ReltoRank_recursion(int l, int r); // 递归转化
+    void ReltoRank();           
+    void ReltoRank_recursion(int l, int r); 
+    void RanktoRel();          
 };

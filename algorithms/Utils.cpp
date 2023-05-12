@@ -7,10 +7,17 @@
 #include <utility>
 #include <vector>
 using namespace std;
-vector<int> new_pred(vector<int> preds) {
+
+
+void new_pred() {
+    // input: preds
+    // output: uni_preds
     int n = preds.size();
-    vector<int> buckets[n + 1];
-    vector<int> uni_preds = preds;
+
+    buckets.resize(n + 1);
+    for (int i = 0; i <= n; i++)
+        buckets[i].clear();
+    uni_preds.resize(n);
     
     for (int i = 0; i < n; i++)
         buckets[preds[i]].push_back(i);
@@ -20,20 +27,27 @@ vector<int> new_pred(vector<int> preds) {
         for (int j = 0; j < buckets[i].size(); j++)
             uni_preds[buckets[i][j]] = counter++;
     
-    return uni_preds;
 }
 
-vector <int> index_to_rank(vector <int> indexes) {
-    vector<int> rank(indexes.size());
+void index_to_rank() {
+    // input: indexes
+    // output: output_rank
+    output_rank.clear();
+    output_rank.resize(indexes.size());
     for (int i = 0; i < indexes.size(); i++) {
-        rank[indexes[i]] = i;
+        output_rank[indexes[i]] = i;
     }
-    return rank;
 }
 
-void output_2D_vector(vector<vector<int>> results) {
+void output_to_file(vector<string> names, vector<vector<ll>> results, string filename) {
+    //output to a file
+
     int n = results.size();
     int m = results[0].size();
+    for (int i = 0; i < n; i++) {
+        cout << names[i] << " ";
+    }
+    cout << endl;
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             cout << results[j][i] << " ";
@@ -41,6 +55,22 @@ void output_2D_vector(vector<vector<int>> results) {
         cout << endl;
     }
     cout << endl;
+
+    ofstream outFile("data/" + filename + ".txt");
+    cerr << "saved to " << filename << endl;
+
+    for (int i = 0; i < n; i++) {
+        outFile << names[i] << " ";
+    }
+    outFile << endl;
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            outFile << results[j][i] << " ";
+        }
+        outFile << endl;
+    }
+    outFile << endl;
+    outFile.close();
 }
 
 double get_time() {
@@ -99,4 +129,28 @@ pair<vector<ll>, vector<ll>> parsePopulationData(const string& filename, int old
 
 
     return make_pair(row2021, rowOld);
+}
+
+vector <vector<bool> > parseTennisRelation(const string &filename, int size) 
+{
+    ifstream file(filename);
+    //first line is the number of players
+    int n;
+    file >> n;
+    cout << "n: " << n << endl;
+    //the rest of the file is the relation
+    string line;
+    vector <vector<bool> > relation;
+    getline(file, line);
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        vector<bool> row;
+        bool value;
+        while (ss >> value)
+            row.push_back(value);
+        relation.push_back(row);
+    }
+    
+    return relation;
 }

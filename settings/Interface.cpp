@@ -83,17 +83,17 @@ double SortGame::eta_min() const {
 // }
 
 
-void SortGame::calculateRank() {
-    ranking.resize(getSize());
-    vector<pair<ll, int>> tmp;
-    for (int i = 0; i < getSize(); ++i) {
-        tmp.push_back(make_pair(A[i], i));
-    }
-    sort(tmp.begin(), tmp.end());
-    for (int i = 0; i < getSize(); ++i) {
-        ranking[tmp[i].second] = i;
-    }
-}
+// void SortGame::calculateRank() {
+//     ranking.resize(getSize());
+//     vector<pair<ll, int>> tmp;
+//     for (int i = 0; i < getSize(); ++i) {
+//         tmp.push_back(make_pair(A[i], i));
+//     }
+//     sort(tmp.begin(), tmp.end());
+//     for (int i = 0; i < getSize(); ++i) {
+//         ranking[tmp[i].second] = i;
+//     }
+// }
 
 
 double SortGame::eta_dirty() const {
@@ -111,9 +111,8 @@ double SortGame::eta_dirty() const {
 void SortGame::ReltoRank() {
     preds.resize(getSize());
     A.resize(getSize());
-    for (int i = 0; i < getSize(); ++i) {
+    for (int i = 0; i < getSize(); ++i)
         A[i] = i;
-    }
     ReltoRank_recursion(0, getSize());
 
     for (int i = 0; i < getSize(); ++i)
@@ -151,5 +150,21 @@ void SortGame::ReltoRank_recursion(int st, int ed) {
     swap(A[st], A[j]);
     ReltoRank_recursion(st, j);
     ReltoRank_recursion(j + 1, ed);
+}
+
+void SortGame::RanktoRel() {
+    if (ranking.size() == 0) {
+        cerr << "RanktoRel error: ranking not calculated" << endl;
+        return;
+    }
+    rel.resize(getSize());
+    if (getSize() > 1e4)
+        return;
+    for (int i = 0; i < getSize(); ++i)
+    {
+        rel[i].resize(getSize());
+        for (int j = 0; j < getSize(); ++j)
+            rel[i][j] = (preds[i] < preds[j]);
+    }
 }
 

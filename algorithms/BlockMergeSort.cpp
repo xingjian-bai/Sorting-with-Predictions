@@ -2,17 +2,16 @@
 #include "Utils.h"
 
 
-std::vector<int> BlockMergeSort::sort(SortGame& game) {
+void BlockMergeSort::sort(SortGame& game) {
     int n = game.getSize();
-    vector<int> preds = game.getPreds();
-    vector<int> uni_preds = new_pred(preds); // 重排preds，使得preds中的数字连续
+    new_pred();
     
-    vector<int> indexes(n);
+    indexes.resize(n);
     for (int i = 0; i < n; i++)
         indexes[uni_preds[i]] = i;
 
-    blockMergeSort(game, n, indexes);
-    return index_to_rank(indexes);
+    blockMergeSort(game, n);
+    return index_to_rank();
 }
 
 int BlockMergeSort::calcMinRun(int n) {
@@ -24,7 +23,7 @@ int BlockMergeSort::calcMinRun(int n) {
     return n + r;
 }
 
-void BlockMergeSort::insertionSort(SortGame& game, int left, int right, std::vector<int>& indexes) {
+void BlockMergeSort::insertionSort(SortGame& game, int left, int right) {
     for (int i = left + 1; i <= right; i++) {
         int temp = indexes[i];
         int j = i - 1;
@@ -36,7 +35,7 @@ void BlockMergeSort::insertionSort(SortGame& game, int left, int right, std::vec
     }
 }
 
-void BlockMergeSort::merge(SortGame& game, int left, int mid, int right, std::vector<int>& indexes) {
+void BlockMergeSort::merge(SortGame& game, int left, int mid, int right) {
     if (mid == right) {
         return;
     }
@@ -64,19 +63,19 @@ void BlockMergeSort::merge(SortGame& game, int left, int mid, int right, std::ve
     }
 }
 
-void BlockMergeSort::blockMergeSort(SortGame& game, int n, std::vector<int>& indexes) {
+void BlockMergeSort::blockMergeSort(SortGame& game, int n) {
     int minRun = calcMinRun(n);
 
     for (int i = 0; i < n; i += minRun) {
-        insertionSort(game, i, std::min(i + minRun - 1, n - 1), indexes);
+        insertionSort(game, i, min(i + minRun - 1, n - 1));
     }
 
     for (int size = minRun; size < n; size *= 2) {
         for (int left = 0; left < n; left += 2 * size) {
             int mid = left + size - 1;
-            int right = std::min(left + 2 * size - 1, n - 1);
+            int right = min(left + 2 * size - 1, n - 1);
 
-            merge(game, left, mid, right, indexes);
+            merge(game, left, mid, right);
         }
     }
 }
