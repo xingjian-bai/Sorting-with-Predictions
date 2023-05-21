@@ -16,7 +16,7 @@ void BlockMergeSort::sort(SortGame& game) {
 
 int BlockMergeSort::calcMinRun(int n) {
     int r = 0;
-    while (n >= 16) {
+    while (n >= 1) {
         r |= n & 1;
         n >>= 1;
     }

@@ -30,8 +30,8 @@ vector<int> ordered, unordered1, unordered2;
 
 // for Both
 vector<int> p_to_A, inserted;
-vector<int> left_sorted, right_sorted, left_bef, right_aft, insert_par;
-vector<int> left_order, right_order, left_weight, right_weight, combine;
+vector<int> left_sorted, right_sorted, left_bef, right_aft, insert_par, combine;
+// vector<int> left_order, right_order, left_weight, right_weight
 
 vector<Node *> ai_to_node;
 
@@ -44,38 +44,37 @@ vector<Node*> nodes;
 // for localshuffle
 vector<int> segs;
 
-vector<vector<ll>> results;
+vector<vector<vector<ll>>> results;
 
 vector <string> names{
     "MergeSort",
     "QuickSort",
     "TimSort",
-    "BlockMergeSort",
+    // "BlockMergeSort",
     "OESM",
     "Cook_Kim",
 
     "LIS",
-    "LIS_small",
+    // "LIS_small",
     "LIS_treap",
 
-    // "BothAlgo"
-    "BothAlgo_small"
+    "BothAlgo",
+    // "BothAlgo_small"
 };
-//, "Both"};  //, "naiveDirtyClean2"};
 vector <SortAlgorithm*> algos {
     new MergeSort(),
     new QuickSort(),
     new TimSort(),
-    new BlockMergeSort(),
+    // new BlockMergeSort(),
     new OESM(),
     new Cook_Kim(),
 
     new LIS(),
-    new LIS_small(),
+    // new LIS_small(),
     new LIS_treap(),
 
-    // new BothAlgo(),
-    new BothAlgo_small()
+    new BothAlgo(),
+    // new BothAlgo_small()
 };
 //, new BothAlgo()}; //, new naiveDirtyClean2()}
 
@@ -90,14 +89,15 @@ void main_objects(int n, int REP, string setting)
         double start_time = get_time();
         double error_rate = i / (double)gap;
 
-        vector<ll> result(num_algo, 0);
+        vector<vector<ll>> result;
+        result.resize(num_algo);
         for (int i = 0; i < REP; i++)
         {
             SortGame *game = new SortGame();
 
             if (setting == "exact")
                 defaultrelation(game, n);
-            else if (setting == "worst")
+            else if (setting == "inverse")
                 worstobject(game, n);
             else if (setting == "bad")
                 badobject(game, n, error_rate);
@@ -108,58 +108,66 @@ void main_objects(int n, int REP, string setting)
             else if (setting == "decay2")
                 decayobject2(game, n, error_rate);
             else if (setting == "local") {
-                int seg = error_rate * n;
+                int seg = error_rate * n; //for stability when error_rate = 0
+                if (seg == 0)
+                    seg = 0.005 * n;
                 localshuffleobject(game, n, seg);
             }
             else {
                     cerr << "wrong setting" << endl;
                     exit(0);
             }
-            // badobject(game, n, error_rate);
-            // permutseobject(game, n, error_rate);
-            // decayobject(game, n, error_rate);
-            // worstobject(game, n);
-            
-            // defaultrelation(game, n);
 
             SortController controller(game);
             for (int i = 0; i < num_algo; i++)
                 controller.addAlgorithm(algos[i], names[i]);
 
-            vector<ll> tmp = controller.runGame();
+            vector<ll> tmp = controller.runGame(i % 20 == 0);
             for (int j = 0; j < num_algo; j++)
-                result[j] += tmp[j] * 1.0 / REP;
+                result[j].push_back(tmp[j]);
         }
+        // for (int i = 0; i < num_algo; i++)
+            // result[i] /= REP;
 
         // game.output_rank();
         results.push_back(result);
         // print result
-        for (int i = 0; i < num_algo; i++)
-            cerr << result[i] << " ";
+        for (int d1 = 0; d1 < num_algo; d1++) {
+            cerr << "(";
+            for (int d2 = 0; d2 < num_algo; d2 ++)
+                cerr << result[d1][d2] << " ";
+            cerr << ")";
+        }
         cerr << endl;
         cerr << "finished error = " << error_rate << " time spend: " << get_time() - start_time << endl;
     }
 }
 
-void main2()
+void main2(int rep)
 { // for country populations
-    int n = 263;
+    
     int num_algo = algos.size();
 
     for (int old = 0; old <= 60; old++)
     {
-        cerr << "start old = " << old << endl;
-        double start_time = get_time();
+        cerr << "old" << old << endl;
+        vector<vector<ll>> result;
+        result.resize(num_algo);
+
         SortGame *game = new SortGame();
         countrypopulation(game, old);
 
-        // game->print();
-        SortController controller(game);
-        for (int i = 0; i < num_algo; i++)
-            controller.addAlgorithm(algos[i], names[i]);
+        for (int i = 0; i < rep; i++)
+        {
+            SortController controller(game);
+            for (int i_algo = 0; i_algo < num_algo; i_algo ++)
+                controller.addAlgorithm(algos[i_algo], names[i_algo]);
 
-        results.push_back(controller.runGame());
-        cerr << "finished old = " << old << " time spend: " << get_time() - start_time << endl;
+            vector<ll> tmp = controller.runGame(i == 0);
+            for (int j = 0; j < num_algo; j++)
+                result[j].push_back(tmp[j]);
+        }
+        results.push_back(result);
     }
 }
 
@@ -172,7 +180,9 @@ void main_relational(int n, int REP, string setting)
         double start_time = get_time();
         double error_rate = i / (double)gap;
 
-        vector<ll> result(num_algo, 0);
+        vector<vector<ll>> result;
+        result.resize(num_algo);
+        int REP_ALGO = 10;
         for (int i = 0; i < REP; i++)
         {
             SortGame *game = new SortGame();
@@ -180,7 +190,7 @@ void main_relational(int n, int REP, string setting)
                 Goodbadrelation(game, n, error_rate);
             else if (setting == "inverse")
                 inverserelation(game, n);
-            else if (setting == "good")
+            else if (setting == "exact")
                 defaultrelation(game, n);
             else if (setting == "badgood" || setting == "bg")
                 Badgoodrelation(game, n, error_rate);
@@ -204,9 +214,12 @@ void main_relational(int n, int REP, string setting)
             SortController controller(game);
             for (int i = 0; i < num_algo; i++)
                 controller.addAlgorithm(algos[i], names[i]);
-            vector<ll> tmp = controller.runGame(i == 0);
-            for (int j = 0; j < num_algo; j++)
-                result[j] += tmp[j] * 1.0 / REP;
+            for (int rep_algo = 1; rep_algo <= REP_ALGO; rep_algo++) {
+                game->ReltoRank();
+                vector<ll> tmp = controller.runGame(i == 0);
+                for (int j = 0; j < num_algo; j++)
+                    result[j].push_back(tmp[j]);
+            }
         }
 
         // game.output_rank();
@@ -249,17 +262,23 @@ void main_relational(int n, int REP, string setting)
 int main()
 {
 
-    srand(1);
+    srand(19260817);
 
     // main2();
     string pred_type, setting;
-    int n, rep;
+    int n = 0, rep = 0;
     cin >> pred_type >> setting;
     if (pred_type == "positional" || pred_type == "p")
     {
         if (setting == "country" || setting == "c")
         {
-            main2();
+            names.push_back("LIS_small");
+            algos.push_back(new LIS_small());
+            names.push_back("BothAlgo_small");
+            algos.push_back(new BothAlgo_small());
+            n = 263;
+            cin >> rep;
+            main2(rep);
         }
         else
         {
@@ -271,6 +290,8 @@ int main()
     {
         names.push_back("DirtyClean2");
         algos.push_back(new DirtyClean2());
+        names.push_back("DirtyClean2_freeze");
+        algos.push_back(new DirtyClean2_freeze());
         cin >> n >> rep;
         main_relational(n, rep, setting);
     }

@@ -21,21 +21,21 @@ void LIS::sort(SortGame &game)
     ScapegoatTree scapegoat;
     Node *finger = nullptr;
 
-    Comp dirty = [&](int a, int b)
-    {
+    Comp dirty = [&](int a, int b) {
         bool result = game.compare(a, b);
         return result;
     };
-    Comp clean = [&](int a, int b)
-    {
+    Comp clean = [&](int a, int b) {
         // cerr << "clean compare " << a << " " << b << endl;
         bool result = game.compare(a, b);
         return result;
     };
 
     for (int index = 0; index < n; index ++) {
-        ll prev_cmp = game.counter();
+        // if (index % 10000 == 0)
+        //     cerr << "LIS " << index << endl;
         int ai = p_to_A[index];
+        // cerr << "inserting " << ai << " with rank, pred = " << ranking[ai] << " " << uni_preds[ai] << endl;
 
         if (finger == nullptr) {
             finger = scapegoat.root = new Node(ai);
@@ -51,16 +51,20 @@ void LIS::sort(SortGame &game)
             finger = finger->parent;
             if (finger == nullptr)
                 assert(false);
-            leftInclude |= (finger->st == -inf) || game.compare(finger->st, ai);
-            rightInclude |= (finger->ed == inf) || game.compare(ai, finger->ed);
+            if (!leftInclude)
+                leftInclude = (finger->st == -inf) || game.compare(finger->st, ai);
+            if (!rightInclude)
+                rightInclude = (finger->ed == inf) || game.compare(ai, finger->ed);
         }
 
         Comp dirty = [&](int a, int b)
         {
+            // cerr << "dirty compare " << a << " " << b << endl;
             if (a == finger->value || b == finger->value)
                 return !clean(a, b);
             if (a == ai)
             {
+                // cerr << b << " " << finger->st << " " << finger->ed << endl;
                 if (b <= finger->st)
                     return false;
                 if (b >= finger->ed)
@@ -68,6 +72,7 @@ void LIS::sort(SortGame &game)
             }
             if (b == ai)
             {
+                // cerr << a << " " << finger->st << " " << finger->ed << endl;
                 if (a <= finger->st)
                     return true;
                 if (a >= finger->ed)

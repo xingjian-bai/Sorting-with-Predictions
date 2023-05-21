@@ -1,6 +1,18 @@
 #pragma once
 #include <vector>
 #include "SortAlgo.h"
+#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+#include <random>
+#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 
 using namespace std;
 const int inf = 1e8;
@@ -14,7 +26,7 @@ void new_pred();
 
 void index_to_rank();
 
-void output_to_file(vector<string> names, vector<std::vector<ll>> results, string filename);
+void output_to_file(vector<string> names, vector<vector<vector<ll>>> results, string filename);
 
 double get_time();
 
@@ -29,7 +41,7 @@ struct Node {
 
     Node(int value) : value(value), priority(rand()), st(-inf), ed(inf), left(nullptr), right(nullptr), parent(nullptr), depth(1), size(1) {}
 };
-
+extern vector<Node *> ai_to_node;
 
 
 class Treap {
@@ -214,48 +226,48 @@ public:
         return ;
     }
 
-    void rebalance(Node *node) {
-        if (!node)
-            return;
+    // void rebalance(Node *node) {
+    //     if (!node)
+    //         return;
 
-        bool left_rotation_required = node->left && node->left->priority > node->priority;
-        bool right_rotation_required = node->right && node->right->priority > node->priority;
+    //     bool left_rotation_required = node->left && node->left->priority > node->priority;
+    //     bool right_rotation_required = node->right && node->right->priority > node->priority;
 
-        bool isRoot = !node->parent;
-        bool isLeft = node->parent && node->parent->left == node;
-        bool isRight = node->parent && node->parent->right == node;
+    //     bool isRoot = !node->parent;
+    //     bool isLeft = node->parent && node->parent->left == node;
+    //     bool isRight = node->parent && node->parent->right == node;
 
 
 
-        if (left_rotation_required && getDepth(node->left) > getDepth(node->right)) {
-            node = rotateRight(node);
-            rebalance(node->left);
-        } 
-        else if (right_rotation_required && getDepth(node->right) > getDepth(node->left)) {
-            node = rotateLeft(node);
-            rebalance(node->right);
-        }
-        else if (left_rotation_required) {
-            node = rotateRight(node);
-            rebalance(node->left);
-        }
-        else if (right_rotation_required) {
-            node = rotateLeft(node);
-            rebalance(node->right);
-        }
+    //     if (left_rotation_required && getDepth(node->left) > getDepth(node->right)) {
+    //         node = rotateRight(node);
+    //         rebalance(node->left);
+    //     } 
+    //     else if (right_rotation_required && getDepth(node->right) > getDepth(node->left)) {
+    //         node = rotateLeft(node);
+    //         rebalance(node->right);
+    //     }
+    //     else if (left_rotation_required) {
+    //         node = rotateRight(node);
+    //         rebalance(node->left);
+    //     }
+    //     else if (right_rotation_required) {
+    //         node = rotateLeft(node);
+    //         rebalance(node->right);
+    //     }
 
-        if (isRoot)
-            root = node;
-        else {
-            if (isLeft)
-                node->parent->left = node;
-            else
-                node->parent->right = node;
-            assert(node->parent!=nullptr);
-            node->parent->depth = max(getDepth(node->parent->left), getDepth(node->parent->right)) + 1;
-        }
+    //     if (isRoot)
+    //         root = node;
+    //     else {
+    //         if (isLeft)
+    //             node->parent->left = node;
+    //         else
+    //             node->parent->right = node;
+    //         assert(node->parent!=nullptr);
+    //         node->parent->depth = max(getDepth(node->parent->left), getDepth(node->parent->right)) + 1;
+    //     }
         
-    }
+    // }
 
     
 
@@ -319,12 +331,61 @@ public:
         return node->size;
     }
 
-    const double ALPHA = 1.05;
+    Node *rotateRight(Node *y) {
+        if (y == nullptr)
+            return nullptr;
+        Node *x = y->left;
+        y->left = x->right;
+        if (x->right != nullptr) {
+            x->right->parent = y;
+        }
+        x->right = y;
+        x->parent = y->parent;
+        y->parent = x;
+
+        x->ed = y->ed;
+        y->st = x->value;
+
+        y->depth = max(getDepth(y->left), getDepth(y->right)) + 1;
+        y->size = getSize(y->left) + getSize(y->right) + 1;
+        x->depth = max(getDepth(x->left), getDepth(x->right)) + 1;
+        x->size = getSize(x->left) + getSize(x->right) + 1;
+        return x;
+    }
+
+    Node *rotateLeft(Node *x) {
+        if (x == nullptr)
+            return nullptr;
+        Node *y = x->right;
+        x->right = y->left;
+        if (y->left != nullptr) {
+            y->left->parent = x;
+        }
+        y->left = x;
+        y->parent = x->parent;
+        x->parent = y;
+
+        y->st = x->st;
+        x->ed = y->value;
+
+        x->depth = max(getDepth(x->left), getDepth(x->right)) + 1;
+        x->size = getSize(x->left) + getSize(x->right) + 1;
+        y->depth = max(getDepth(y->left), getDepth(y->right)) + 1;
+        y->size = getSize(y->left) + getSize(y->right) + 1;
+        
+        return y;
+    }
+
+    const double ALPHA = 1.3;
     bool isScapegoat(Node *node) {
-        if (!node || !node->parent) return false;
-        double large = max(getDepth(node->parent->left), getDepth(node->parent->right));
-        double small = min(getDepth(node->parent->left), getDepth(node->parent->right));
-        return large > ALPHA * (small + 1);
+        if (!node) return false;
+        double large = max(getDepth(node->left), getDepth(node->right));
+        double small = min(getDepth(node->left), getDepth(node->right));
+        return large >= ALPHA * (small + 1);
+    
+        // double largeSize = max(getSize(node->left), getSize(node->right));
+        // double smallSize = min(getSize(node->left), getSize(node->right));
+        // return largeSize > ALPHA * (smallSize + 1);
     }
 
 
@@ -371,6 +432,7 @@ public:
 
     Node* rebuild(Node *node) {
         if (!node) return nullptr;
+        // cerr << "rebuilding " << node->value << endl;
         nodes.resize(0);
         
         flatten(node, nodes);
@@ -449,7 +511,7 @@ public:
         return find_kth_largest(node->left, k - right_size - 1);
     }
 
-    Node*find_largest_small(Node *node, int value, const Comp &comp) {
+    Node* find_largest_small(Node *node, int value, const Comp &comp) {
         if (node == nullptr) return nullptr;
         if (comp(node->value, value)) {
             Node *res = find_largest_small(node->right, value, comp);
@@ -457,6 +519,16 @@ public:
             return node;
         }
         return find_largest_small(node->left, value, comp);
+    }
+
+    Node* find_smallest_large(Node *node, int value, const Comp &comp) {
+        if (node == nullptr) return nullptr;
+        if (comp(value, node->value)) {
+            Node *res = find_smallest_large(node->left, value, comp);
+            if (res) return res;
+            return node;
+        }
+        return find_smallest_large(node->right, value, comp);
     }
 
     Node *merge(Node *left, Node *right) {
@@ -499,7 +571,9 @@ public:
     }
 
     bool compare(Node *x, Node *y) {
-        assert(x != y);
+        // assert(x != y);
+        if (x == y)
+            return false;
         if (x == nullptr || y == nullptr)
             return false;
         Node *lca = getLCA(x, y);

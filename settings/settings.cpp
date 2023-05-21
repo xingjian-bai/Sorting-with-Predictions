@@ -81,7 +81,6 @@ void defaultobject(SortGame *game, int size) {
     // mt19937 gen(static_cast<unsigned>(time(nullptr)));
     game->init();
 
-    vector<int> root[size];
     for (int i = 0; i < size; i++) {
         A.push_back(i);
         ranking.push_back(i);
@@ -92,25 +91,34 @@ void defaultobject(SortGame *game, int size) {
 
 
 void countrypopulation(SortGame *game, int old) {
-
     game->init();
     const string filename = "data/country_population_cleaned.txt";
     auto [row2021, rowOld] = parsePopulationData(filename, old);
     
 
     A = row2021;
-
     vector<pair<ll, int>> indexedRowOld;
-    for (int i = 0; i < rowOld.size(); i++)         indexedRowOld.push_back(make_pair(rowOld[i], i));
+    for (int i = 0; i < rowOld.size(); i++)
+        indexedRowOld.push_back(make_pair(rowOld[i], i));
     sort(indexedRowOld.begin(), indexedRowOld.end());
-    preds.resize(rowOld.size());
-    for (int i = 0; i < indexedRowOld.size(); i++)  preds[indexedRowOld[i].second] = i;
+    
+    vector<int> helper(rowOld.size());
+
+    for (int i = 0; i < indexedRowOld.size(); i++)
+        helper[indexedRowOld[i].second] = i;
 
     vector<pair<ll, int>> indexedRowA;
-    for (int i = 0; i < row2021.size(); i++)         indexedRowA.push_back(make_pair(A[i], i));
+    for (int i = 0; i < row2021.size(); i++)
+        indexedRowA.push_back(make_pair(A[i], i));
     sort(indexedRowA.begin(), indexedRowA.end());
+
     ranking.resize(A.size());
-    for (int i = 0; i < indexedRowA.size(); i++)  ranking[indexedRowA[i].second] = A[indexedRowA[i].second] = i;
+    preds.resize(A.size());
+    for (int i = 0; i < indexedRowA.size(); i++) {
+        // move original index indexedRowA[i].second to position i
+        ranking[i] = A[i] = i;
+        preds[i] = helper[indexedRowA[i].second];
+    }
 
     game->RanktoRel();
 }
@@ -119,8 +127,8 @@ void localshuffleobject(SortGame *game, int size, int seg) {
     defaultobject(game, size);
 
     segs.resize(0);
-    for (int i = 0; i < seg; i ++)
-        segs.push_back(rand() % size);
+    for (int i = 0; i < seg; i ++) //for stability when seg == 0 
+        segs.push_back((ll)rand() * rand() % size);
     sort(segs.begin(), segs.end());
 
     for (int i = 0; i <= segs.size(); i++) {
@@ -148,9 +156,9 @@ void decayobject(SortGame *game, int size, double decay) {
             if (random01() <= ratio) {
                 // cerr << "happened! " << " " << random01() << endl;
                 if (random01() <= 0.5)
-                    preds[i] = max(preds[i] - (int)log(size), 0);
+                    preds[i] = max(preds[i] - 10, 0);
                 else 
-                    preds[i] = min(preds[i] + (int)log(size), size - 1);
+                    preds[i] = min(preds[i] + 10, size - 1);
             }
         }
     
@@ -159,27 +167,19 @@ void decayobject(SortGame *game, int size, double decay) {
 
 void decayobject2(SortGame *game, int size, double decay) {
     defaultobject(game, size);
-
-    // double ratio = log(size) / size;
+    // cerr << " ???? " << rand() << endl;
+    double ratio = log(size) / size;
     // cerr << "error ratio: " << ratio << endl;
     // cerr << "rand01: " << random01() << endl;
-    // for (int dec = 0; dec < decay * size; dec ++)
-    mt19937 generator;
-    int stddev = sqrt(decay * size);
-    cerr << "stddev: " << stddev << endl;
-    for (int i = 0; i < size; i++) {
-        // generate a normal distribution around i
-        //define gen
-        int mean = preds[i];
-        if (random01() > 1.0 / sqrt(size * decay))
-            continue ;        
-        
-        normal_distribution<double> distribution(mean, stddev);
-        int newpred = distribution(generator);
-        // cerr << "stddev=" << stddev << ", new gen " << newpred << " from " << preds[i] << endl;
-        preds[i] = min(max(newpred, 0), size - 1);
+    for (int i = 1; i <= decay * size * 100; i ++)
+    {
+        int pos = rand() % size;
+        if (random01() <= 0.5)
+            preds[pos] = max(preds[pos] - 1, 0);
+        else
+            preds[pos] = min(preds[pos] + 1, size - 1);
     }
-    
+
     game->RanktoRel();
 }
 
@@ -286,6 +286,8 @@ void IndepRelation(SortGame *game, int size, double ratio) {
 void Badgoodrelation(SortGame *game, int size, double ratio) {
     defaultrelation(game, size);
 
+    // double ratio = 1 - sqrt(1 - edge_ratio);
+
     bool ifBad[size];
     
     for (int i = 0; i < A.size(); i++)
@@ -332,7 +334,7 @@ void Tennisrelation(SortGame *game, int size) {
 }
 
 double sigmoid (double x, double lambda) {
-    return 1.0 / (1.0 + exp(-lambda * x * x));
+    return 1.0 / (1.0 + exp(-lambda * x));
 }
 void SigmoidRelation(SortGame *game, int size, double ratio) {
     defaultrelation(game, size);
@@ -340,7 +342,7 @@ void SigmoidRelation(SortGame *game, int size, double ratio) {
     
     for (int i = 0; i < A.size(); i++) {
         for (int j = i + 1; j < A.size(); j++) {
-            double x = (j - i) / (double) size;
+            double x = (j - i);
             double p = sigmoid(x, ratio);
             if (random01() > p) {
                 rel[i][j] = 0;

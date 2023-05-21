@@ -20,8 +20,8 @@ extern vector<int> ordered, unordered1, unordered2;
 //for Both
 extern vector<int> p_to_A, inserted;
 extern vector<int> left_sorted, right_sorted, left_bef, right_aft, combine, insert_par;
-extern vector<int> left_order, right_order, left_weight, right_weight;
-extern vector<Node *> ai_to_node;
+// extern vector<int> left_order, right_order, left_weight, right_weight;
+
 
 //for DirtyClean2
 extern vector<int> shuffledA;
@@ -29,7 +29,12 @@ extern vector<int> shuffledA;
 class SortAlgorithm
 {
 public:
-    // 对SortGame中的数字数组A进行排序，并返回排序后的数组
+    virtual void sort(SortGame& game) {};
+};
+
+class Left
+{
+public:
     virtual void sort(SortGame& game) {};
 };
 
@@ -38,6 +43,7 @@ public:
     LIS() = default;
     void sort(SortGame& game) override;
 };
+
 
 class LIS_small : public SortAlgorithm {
 public:
@@ -71,6 +77,14 @@ class DirtyClean2 : public SortAlgorithm {
 public:
     //init functions
     DirtyClean2() = default;
+
+    void sort(SortGame& game) override;
+};
+
+class DirtyClean2_freeze : public SortAlgorithm {
+public:
+    //init functions
+    DirtyClean2_freeze() = default;
 
     void sort(SortGame& game) override;
 };

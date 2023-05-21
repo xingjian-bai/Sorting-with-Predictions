@@ -6,8 +6,12 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <random>
+#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 using namespace std;
-
 
 void new_pred() {
     // input: preds
@@ -21,6 +25,11 @@ void new_pred() {
     
     for (int i = 0; i < n; i++)
         buckets[preds[i]].push_back(i);
+    
+    //random shuffle each bucket
+    for (int i = 0; i <= n; i++)
+        for (int j = 0; j < buckets[i].size(); j++)
+            swap(buckets[i][j], buckets[i][rand() % buckets[i].size()]);
 
     int counter = 0;
     for (int i = 0; i <= n; i++)
@@ -39,37 +48,40 @@ void index_to_rank() {
     }
 }
 
-void output_to_file(vector<string> names, vector<vector<ll>> results, string filename) {
+void output_to_file(vector<string> names, vector<vector<vector<ll>>> results, string filename) {
     //output to a file
-
     int n = results.size();
     int m = results[0].size();
-    for (int i = 0; i < n; i++) {
-        cout << names[i] << " ";
-    }
-    cout << endl;
+    // cerr << "sizes" << names.size() << " " << n << " " << m << endl;
     for (int i = 0; i < m; i++) {
+        //align
+        // cout << names[i] << " ";
         for (int j = 0; j < n; j++) {
-            cout << results[j][i] << " ";
+            vector <ll> reps = results[j][i];
+            cout << names[i] << " ";
+            for (int k = 0; k < reps.size(); k++) {
+                cout << reps[k] << " ";
+            }
+            cout << endl;
         }
-        cout << endl;
     }
-    cout << endl;
 
     ofstream outFile("data/" + filename + ".txt");
     cerr << "saved to " << filename << endl;
-
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < m; i++) {
         outFile << names[i] << " ";
     }
-    outFile << endl;
+    outFile << endl
+            << m << " " << n << " " << results[0][0].size() << endl;
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
-            outFile << results[j][i] << " ";
+            vector <ll> reps = results[j][i];
+            for (int k = 0; k < reps.size(); k++) {
+                outFile << reps[k] << " ";
+            }
+            outFile << endl;
         }
-        outFile << endl;
     }
-    outFile << endl;
     outFile.close();
 }
 

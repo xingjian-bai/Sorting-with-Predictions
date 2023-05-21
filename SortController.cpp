@@ -22,16 +22,19 @@ vector<ll> SortController::runGame(bool verbose)
         output_rank.clear();
         // cerr << "at " << names[i] << " " << endl;
         // cerr << names[i] << " " << "at the start" << game->counter() << endl;
+        double start_time = TIME;
         algorithms[i]->sort(*game);
+        double end_time = TIME;
         // cerr << "at the end" << game->counter() << endl;
 
-        int columnWidth = 15;
         if (verbose)
-            cerr << left << setw(columnWidth) << names[i];
+            cerr << left << setw(15) << names[i];
 
         if (game->isSameAsRank(output_rank)) {
-            if (verbose)
-                cerr << "OK! in " << setw(columnWidth - 7) << game->counter() << " steps" << endl;
+            if (verbose) {
+                cerr << "OK! in " << setw(10) << game->counter() << " steps";
+                cerr << "Time: " << setw(10) << end_time - start_time << " secs" << endl;
+            }
             result.push_back(game->counter());
         } else {
             cerr << "The sorted array is not the same as rank!" << std::endl;
