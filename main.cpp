@@ -182,8 +182,8 @@ void main_relational(int n, int REP, string setting)
 
         vector<vector<ll>> result;
         result.resize(num_algo);
-        int REP_ALGO = 10;
-        for (int i = 0; i < REP; i++)
+        int REP_ALGO = 5;
+        for (int i = 0; i < REP / REP_ALGO; i++)
         {
             SortGame *game = new SortGame();
             if (setting == "goodbad" || setting == "gb")
@@ -290,8 +290,8 @@ int main()
     {
         names.push_back("DirtyClean2");
         algos.push_back(new DirtyClean2());
-        names.push_back("DirtyClean2_freeze");
-        algos.push_back(new DirtyClean2_freeze());
+        // names.push_back("DirtyClean2_freeze");
+        // algos.push_back(new DirtyClean2_freeze());
         cin >> n >> rep;
         main_relational(n, rep, setting);
     }

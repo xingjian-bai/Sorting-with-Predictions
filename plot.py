@@ -42,7 +42,7 @@ def plot_data(names, data, n, signature, exclude = [], target = []):
         # print("ploting", x, names[i], means[i] / n, stds[i] / n)
         plt.plot(x, means[i], label=names[i], linewidth=2 if names[i] in target else 1)
         print(names[i], means[i][-1], stds[i][-1])
-        plt.fill_between(x, means[i] - stds[i], means[i] + stds[i], alpha=0.3)
+        plt.fill_between(x, means[i] - stds[i], means[i] + stds[i], alpha=0.15)
 
         
     nlogn_y = [math.log2(n) for _ in x]
@@ -58,7 +58,7 @@ def plot_data(names, data, n, signature, exclude = [], target = []):
     plt.ylabel('# comparisons $/$ $n$', fontsize=22)
     # plt.title(signature)
 
-    plt.legend(prop={'size': 12}, ncols = 2, loc='upper left')
+    plt.legend(prop={'size': 12}, ncols = 2, loc='lower right')
 
     
     # decay2
@@ -67,7 +67,7 @@ def plot_data(names, data, n, signature, exclude = [], target = []):
     # plt.xticks(x[::2], x_ticks[::2])
 
     #local
-    plt.xlabel('#classes $/$ $n$', fontsize=22)
+    # plt.xlabel('#classes $/$ $n$', fontsize=22)
 
     # country
     # plt.xlabel('gap in years', fontsize=22)
@@ -77,6 +77,10 @@ def plot_data(names, data, n, signature, exclude = [], target = []):
     # Good-Dominating 
     # plt.xlabel('damage ratio $r$', fontsize=20)
     # plt.title("")
+
+    # Bad-Dominating 
+    plt.xlabel('damage ratio $r$ (in edges)', fontsize=20)
+    plt.title("")
     
 
     

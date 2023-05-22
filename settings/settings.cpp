@@ -283,10 +283,10 @@ void IndepRelation(SortGame *game, int size, double ratio) {
     game->ReltoRank();
 }
 
-void Badgoodrelation(SortGame *game, int size, double ratio) {
+void Badgoodrelation(SortGame *game, int size, double edge_ratio) {
     defaultrelation(game, size);
 
-    // double ratio = 1 - sqrt(1 - edge_ratio);
+    double ratio = 1 - sqrt(1 - edge_ratio);
 
     bool ifBad[size];
     
