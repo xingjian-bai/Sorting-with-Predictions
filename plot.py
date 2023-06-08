@@ -10,6 +10,12 @@ import math
 import numpy as np
 def plot_data(names, data, n, signature, exclude = [], target = []):
     x = list(range(len(data[0])))
+    x = [i / 20 for i in x]
+    # ratio_in_items = [(1 - np.sqrt(1 - r)) for r in x]
+    ratio_in_items = x
+    print(x)
+    # print(ratio_in_items)
+
     # print("shapes: ", len(names), len(data), len(data[0]))
     for (i, name) in enumerate(names):
         if name in exclude:
@@ -40,9 +46,9 @@ def plot_data(names, data, n, signature, exclude = [], target = []):
         if names[i] in exclude:
             continue
         # print("ploting", x, names[i], means[i] / n, stds[i] / n)
-        plt.plot(x, means[i], label=names[i], linewidth=2 if names[i] in target else 1)
+        plt.plot(ratio_in_items, means[i], label=names[i], linewidth=2 if names[i] in target else 1)
         print(names[i], means[i][-1], stds[i][-1])
-        plt.fill_between(x, means[i] - stds[i], means[i] + stds[i], alpha=0.15)
+        plt.fill_between(ratio_in_items, means[i] - stds[i], means[i] + stds[i], alpha=0.15)
 
         
     nlogn_y = [math.log2(n) for _ in x]
@@ -52,19 +58,22 @@ def plot_data(names, data, n, signature, exclude = [], target = []):
 
 
     # set x ticks
-    x_ticks = [i / 20 for i in x]
+    x_ticks = x
     plt.xticks(x[::2], x_ticks[::2])
 
     plt.ylabel('# comparisons $/$ $n$', fontsize=22)
     # plt.title(signature)
 
-    plt.legend(prop={'size': 12}, ncols = 2, loc='lower right')
+    plt.legend(prop={'size': 12}, ncols = 2, loc='center left', bbox_to_anchor=(0, 0.6))
 
     
     # decay2
-    # plt.xlabel('#timesteps $/$ $n$', fontsize=22)
-    # x_ticks = [int(i / 20 * 100) for i in x]
-    # plt.xticks(x[::2], x_ticks[::2])
+    plt.xlabel('#timesteps $/$ $n$', fontsize=22)
+    x_ticks = [int(i / 20 * 100) for i in x]
+    plt.xticks(x[::2], x_ticks[::2])
+
+    # set y ticks to be integers
+    plt.yticks(np.arange(0, 22, 2), np.arange(0, 22, 2))
 
     #local
     # plt.xlabel('#classes $/$ $n$', fontsize=22)
@@ -79,8 +88,8 @@ def plot_data(names, data, n, signature, exclude = [], target = []):
     # plt.title("")
 
     # Bad-Dominating 
-    plt.xlabel('damage ratio $r$ (in edges)', fontsize=20)
-    plt.title("")
+    # plt.xlabel('damage ratio $r$', fontsize=20)
+    # plt.title("")
     
 
     
