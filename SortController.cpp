@@ -20,7 +20,7 @@ vector<ll> SortController::runGame(bool verbose)
     for (int i = 0; i < algorithms.size(); i++) {
         game->clear_counter();
         output_rank.clear();
-        // cerr << "at " << names[i] << " " << endl;
+        // cerr << "in controller.runGame, enum algos, at " << names[i] << " " << endl;
         // cerr << names[i] << " " << "at the start" << game->counter() << endl;
         double start_time = TIME;
         algorithms[i]->sort(*game);

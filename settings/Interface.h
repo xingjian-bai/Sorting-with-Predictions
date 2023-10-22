@@ -17,6 +17,7 @@ public:
     bool compare(int i, int j)      {
         assert(i != j);
         cmp_counter++;
+        // cerr << "cmp " << i << " " << j << endl;
         return ranking[i] < ranking[j];
     }
     bool dirtyCompare(int i, int j) { return rel[i][j];}

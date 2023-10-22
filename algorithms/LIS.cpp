@@ -51,10 +51,8 @@ void LIS::sort(SortGame &game)
             finger = finger->parent;
             if (finger == nullptr)
                 assert(false);
-            if (!leftInclude)
-                leftInclude = (finger->st == -inf) || game.compare(finger->st, ai);
-            if (!rightInclude)
-                rightInclude = (finger->ed == inf) || game.compare(ai, finger->ed);
+            leftInclude = (finger->st == -inf) || game.compare(finger->st, ai);
+            rightInclude = (finger->ed == inf) || game.compare(ai, finger->ed);
         }
 
         Comp dirty = [&](int a, int b)

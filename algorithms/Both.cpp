@@ -63,11 +63,12 @@ void BothAlgo::sort(SortGame &game)
                     return left_sorted_tree.compare(ai_to_node[target->value], ai_to_node[b]);
                 };
                 Comp left_clean = [&](int a, int b){return true;};
-
+                // cerr << "bef cmp count: " << game.counter() << endl;
                 ai_to_node[A_i] = left_sorted_tree.insert(A_i, left_dirty, left_clean, target == nullptr ? -1 : target->value);
                 inserted[A_i] = delta;
                 left_bef.insert(A_i, left_sorted_cmp, left_sorted_cmp, -1);
                 inserted_count++;
+                // cerr << "aft cmp count: " << game.counter() << endl;
             }
         }
 

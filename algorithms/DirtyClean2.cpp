@@ -13,18 +13,13 @@
 using namespace std;
 typedef function<bool(int, int)> Comp;
 
-
-
-
 void DirtyClean2::sort(SortGame &game)
 {
     vector <Node*> path;
     map <pair<int, int>, bool> dirty_records, clean_records;
-    // Treap treap;
     ScapegoatTree tree;
     Comp dirty = [&](int a, int b)
     {
-        // cerr << "dirty compare " << a << " " << b << endl;
         if (dirty_records.count(make_pair(a, b)))
             return dirty_records[make_pair(a, b)];
         bool result = game.dirtyCompare(a, b);
@@ -33,7 +28,6 @@ void DirtyClean2::sort(SortGame &game)
         return result;
     };
     Comp clean = [&](int a, int b) {
-        // cerr << "clean compare " << a << " " << b << endl;
         if (clean_records.count(make_pair(a, b)))
             return clean_records[make_pair(a, b)];
         bool result = game.compare(a, b);
@@ -44,35 +38,23 @@ void DirtyClean2::sort(SortGame &game)
 
 
     auto insertElement = [&](int ai) {
-        // cerr << "insert " << ai << endl;
-        // Node* p1 = tree.insert(ai, dirty, clean);
         Node* p1 = tree.freeze_insert(ai, dirty, clean);
-        // cerr << "<<<<<<insert1<<<<<<" << " " << ai << endl;
-        // tree.LinearPrint(tree.root);
-        // cerr << "<<<<<<<<<<<<" << endl;
-        // cerr << "inserted " << ai << endl;
         Node* p1_copy = p1, * p1_up = p1;
 
         path.resize(0);
         while (p1_up != nullptr) {
-            // cerr << "if null" << (p1_up == nullptr) << endl;
-            // cerr << "p1_up: " << p1_up->value << " - " << p1_up->st << " " << p1_up->ed << endl;
             path.push_back(p1_up);
             p1_up = p1_up->parent;
         }
-        // cerr << "path size: " << path.size() << endl;
 
         bool leftInclude = (p1->st == -inf) || game.compare(p1->st, ai);
         bool rightInclude = (p1->ed == inf) || game.compare(ai, p1->ed);
-        // cerr << "leftInclude: " << leftInclude << " rightInclude: " << rightInclude << endl;
 
         int minLeftInclude = inf, minRightInclude = inf;
 
         int st = 0, ed = 0;
-        // cerr << "path size: " << path.size() << endl;
         while (!leftInclude || !rightInclude)
         {
-            // cerr << " ?? " << st << " " << ed << endl;
             st = ed;
             ed = min((int)path.size() - 1, max(ed + 1, ed * 2));
             Node * tg = path[ed];
@@ -83,8 +65,6 @@ void DirtyClean2::sort(SortGame &game)
             if (leftInclude)    minLeftInclude = min(minLeftInclude, ed);
             if (rightInclude)   minRightInclude = min(minRightInclude, ed);
         }
-        // cerr << "ed: " << ed << endl;
-
 
         
         while (st < ed) {

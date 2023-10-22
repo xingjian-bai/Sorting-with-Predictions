@@ -9,14 +9,19 @@ g++ -std=c++17 -O3 \
  algorithms/Both_small.cpp \
  algorithms/LIS_small.cpp \
  algorithms/DirtyClean2.cpp \
+ algorithms/DirtyClean3.cpp \
+ algorithms/DirtyClean4.cpp \
  algorithms/DirtyClean2_freeze.cpp \
  algorithms/MergeSort.cpp \
  algorithms/QuickSort.cpp \
  algorithms/TimSort.cpp \
+ algorithms/TimSort2.cpp \
  algorithms/BlockMergeSort.cpp \
  algorithms/OESM.cpp \
  algorithms/Cook_Kim.cpp \
  algorithms/Both.cpp \
+ algorithms/Both2.cpp \
+ algorithms/Insertion.cpp \
  -o main
 
 
