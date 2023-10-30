@@ -180,3 +180,25 @@ void Badgoodrelation(SortGame *game, int size, double ratio) {
     }
     game->ReltoRank();
 }
+
+void localshuffleobject(SortGame *game, int size, int seg) {
+    defaultobject(game, size);
+
+    segs.resize(0);
+    for (int i = 0; i < seg; i ++) //for stability when seg == 0 
+        segs.push_back((ll)rand() * rand() % size);
+    sort(segs.begin(), segs.end());
+
+    for (int i = 0; i < segs.size(); i++) {
+        int st = (i ? segs[i - 1] : 0);
+        int ed = (i == segs.size() - 1? size : segs[i]);
+
+        for (int j = st; j < ed; j++) {
+            // if (seg == 1)
+            //     cerr << "shuffle: " << size << " " << st << " " << (ed - st) << endl;
+            preds[j] = st + rand() % (ed - st);
+        }
+    }
+
+    game->RanktoRel();
+}

@@ -90,11 +90,11 @@ void main_objects(int n, int REP, string setting)
 
             if (setting == "exact")
                 defaultrelation(game, n);
-            else if (setting == "decay2")
+            else if (setting == "decay2" || setting == "decay")
                 decayobject2(game, n, error_rate);
             else if (setting == "decay2_1000")
                 decayobject2_1000(game, n, error_rate);
-            else if (setting == "local") {
+            else if (setting == "local" || setting == "class") {
                 int seg = error_rate * n; //for stability when error_rate = 0
                 if (seg == 0)
                     seg = 1;
@@ -173,9 +173,9 @@ void main_relational(int n, int REP, string setting)
         for (int i = 0; i < REP / REP_ALGO; i++)
         {
             SortGame *game = new SortGame();
-            if (setting == "goodbad" || setting == "gb")
+            if (setting == "goodbad" || setting == "gb" || setting == "good-dominating")
                 Goodbadrelation(game, n, error_rate);
-            else if (setting == "badgood" || setting == "bg")
+            else if (setting == "badgood" || setting == "bg" || setting == "bad-dominating")
                 Badgoodrelation(game, n, error_rate);
             else
             {
@@ -239,7 +239,7 @@ int main()
             main_objects(n, rep, setting);
         }
     }
-    else if (pred_type == "relational" || pred_type == "r")
+    else if (pred_type == "relational" || pred_type == "r" || pred_type == "dirty")
     {
         names.push_back("DirtyClean4");
         algos.push_back(new DirtyClean4());
