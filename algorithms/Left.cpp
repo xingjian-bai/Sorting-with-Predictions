@@ -21,10 +21,6 @@ void Left::sort(SortGame &game)
 
     ScapegoatTree left_sorted, right_sorted;
 
-    // left_weight.clear(); left_weight.resize(n);
-    // right_weight.clear(); right_weight.resize(n);
-    // insert_par.clear(); insert_par.resize(n);
-
     ai_to_node.clear(); ai_to_node.resize(n);
 
     int inserted_count = 0;

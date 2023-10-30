@@ -225,79 +225,7 @@ public:
         }
         return ;
     }
-
-    // void rebalance(Node *node) {
-    //     if (!node)
-    //         return;
-
-    //     bool left_rotation_required = node->left && node->left->priority > node->priority;
-    //     bool right_rotation_required = node->right && node->right->priority > node->priority;
-
-    //     bool isRoot = !node->parent;
-    //     bool isLeft = node->parent && node->parent->left == node;
-    //     bool isRight = node->parent && node->parent->right == node;
-
-
-
-    //     if (left_rotation_required && getDepth(node->left) > getDepth(node->right)) {
-    //         node = rotateRight(node);
-    //         rebalance(node->left);
-    //     } 
-    //     else if (right_rotation_required && getDepth(node->right) > getDepth(node->left)) {
-    //         node = rotateLeft(node);
-    //         rebalance(node->right);
-    //     }
-    //     else if (left_rotation_required) {
-    //         node = rotateRight(node);
-    //         rebalance(node->left);
-    //     }
-    //     else if (right_rotation_required) {
-    //         node = rotateLeft(node);
-    //         rebalance(node->right);
-    //     }
-
-    //     if (isRoot)
-    //         root = node;
-    //     else {
-    //         if (isLeft)
-    //             node->parent->left = node;
-    //         else
-    //             node->parent->right = node;
-    //         assert(node->parent!=nullptr);
-    //         node->parent->depth = max(getDepth(node->parent->left), getDepth(node->parent->right)) + 1;
-    //     }
-        
-    // }
-
-    
-
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 extern vector<Node*> nodes;
@@ -376,7 +304,7 @@ public:
         return y;
     }
 
-    const double ALPHA = 1.3;
+    const double ALPHA = 1.2;
     bool isScapegoat(Node *node) {
         if (!node) return false;
         double large = max(getDepth(node->left), getDepth(node->right));
@@ -472,7 +400,6 @@ public:
     void updateAncestors(Node *node) {
         if (!node)
             return;
-        // cerr << "updateAncestors " << node->value << endl;
         if (node->parent) {
             node->parent->depth = max(getDepth(node->parent->left), getDepth(node->parent->right)) + 1;
             node->parent->size = getSize(node->parent->left) + getSize(node->parent->right) + 1;
@@ -571,6 +498,10 @@ public:
     }
 
     bool compare(Node *x, Node *y) {
+        /*
+            return true if x is on the left of lca(x, y)
+            if x is y's ancestor, return if y is on the right of lca(x, y)
+        */
         // assert(x != y);
         if (x == y)
             return false;

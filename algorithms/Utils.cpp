@@ -55,15 +55,19 @@ void output_to_file(vector<string> names, vector<vector<vector<ll>>> results, st
     // cerr << "sizes" << names.size() << " " << n << " " << m << endl;
     for (int i = 0; i < m; i++) {
         //align
-        // cout << names[i] << " ";
+        cout << names[i] << " ";
         for (int j = 0; j < n; j++) {
             vector <ll> reps = results[j][i];
-            cout << names[i] << " ";
-            for (int k = 0; k < reps.size(); k++) {
-                cout << reps[k] << " ";
+            // cout << names[i] << " ";
+            ll sum = 0;
+            for (int k = 0; k < reps.size(); k++)
+            {
+                // cout << reps[k] << " ";
+                sum += reps[k];
             }
-            cout << endl;
+            cout << sum / reps.size() << " ";
         }
+        cout << endl;
     }
 
     ofstream outFile("data/" + filename + ".txt");

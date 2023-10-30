@@ -21,7 +21,7 @@ extern vector<int> ordered, unordered1, unordered2;
 extern vector<int> p_to_A, inserted;
 extern vector<int> left_sorted, right_sorted, left_bef, right_aft, combine, insert_par;
 // extern vector<int> left_order, right_order, left_weight, right_weight;
-
+extern vector<int> li, ri;
 
 //for DirtyClean2
 extern vector<int> shuffledA;
@@ -41,6 +41,12 @@ public:
 class LIS : public SortAlgorithm {
 public:
     LIS() = default;
+    void sort(SortGame& game) override;
+};
+
+class Insertion : public SortAlgorithm {
+public:
+    Insertion() = default;
     void sort(SortGame& game) override;
 };
 
@@ -65,10 +71,26 @@ public:
     void sort(SortGame& game) override;
 };
 
+class BothAlgo2 : public SortAlgorithm {
+public:
+    //init functions
+    BothAlgo2() = default;
+
+    void sort(SortGame& game) override;
+};
+
 class BothAlgo_small : public SortAlgorithm {
 public:
     //init functions
     BothAlgo_small() = default;
+
+    void sort(SortGame& game) override;
+};
+
+class BothAlgo_small3 : public SortAlgorithm {
+public:
+    //init functions
+    BothAlgo_small3() = default;
 
     void sort(SortGame& game) override;
 };
@@ -78,6 +100,18 @@ public:
     //init functions
     DirtyClean2() = default;
 
+    void sort(SortGame& game) override;
+};
+
+class DirtyClean3 : public SortAlgorithm {
+public:
+    DirtyClean3() = default;
+    void sort(SortGame& game) override;
+};
+
+class DirtyClean4 : public SortAlgorithm {
+public:
+    DirtyClean4() = default;
     void sort(SortGame& game) override;
 };
 
@@ -127,18 +161,25 @@ public:
 
     void sort(SortGame& game) override;
 
-private:
-    // Function to perform insertion sort on small subarrays
-    void insertionSort(SortGame& game, int left, int right);
+// private:
+//     // Function to perform insertion sort on small subarrays
+//     void insertionSort(SortGame& game, int left, int right);
 
-    // Function to merge two sorted subarrays
-    void merge(SortGame& game, int left, int mid, int right);
+//     // Function to merge two sorted subarrays
+//     void merge(SortGame& game, int left, int mid, int right);
 
-    // Main Tim Sort function
-    void timSort(SortGame& game, int n);
+//     // Main Tim Sort function
+//     void timSort(SortGame& game, int n);
 
     // Constants
     const int RUN = 32;
+};
+
+class TimSort2 : public SortAlgorithm {
+public:
+    // Constructor
+    TimSort2() = default;
+    void sort(SortGame& game) override;
 };
 
 

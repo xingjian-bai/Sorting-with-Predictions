@@ -6,36 +6,12 @@
 #include <chrono>
 using namespace std;
 
-void badobject(SortGame *game, int size, double prob);
-
-void permuteobject(SortGame *game, int size, double prob);
-
-void worstobject(SortGame *game, int size);
-
 void defaultobject(SortGame *game, int size);
-
 void countrypopulation(SortGame *game, int old);
-
-void decayobject(SortGame *game, int size, double decay);
 void decayobject2(SortGame *game, int size, double decay);
-
-extern vector<int> segs;
-void localshuffleobject(SortGame *game, int size, int seg);
-
+void decayobject2_1000(SortGame *game, int size, double decay);
+void new_object_setting(SortGame *game, int size, double ratio);
+void swap_and_noise(SortGame *game, int size, double ratio);
 void defaultrelation(SortGame *game, int size);
-void inverserelation(SortGame *game, int size);
-
 void Goodbadrelation(SortGame *game, int size, double ratio);
-
 void Badgoodrelation(SortGame *game, int size, double ratio);
-
-void Productrelation(SortGame *game, int size, double ratio);
-void Productrelation2(SortGame *game, int size, double ratio);
-
-void IndepRelation(SortGame *game, int size, double ratio);
-
-void Tennisrelation(SortGame *game, int size);
-
-void SigmoidRelation(SortGame *game, int size, double ratio);
-
-void localshuffleobject(SortGame *game, int size, int seg);

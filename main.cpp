@@ -10,14 +10,14 @@ using namespace std;
 
 vector<vector<int>> buckets;
 
-vector<ll> A;             // 数字数组
-vector<int> preds;        // 预测排名数组
-vector<int> ranking;      // 真实排名数组
-vector<vector<bool>> rel; // 关系数组
+vector<ll> A;             // list of objects
+vector<int> preds;        // list of predictions
+vector<int> ranking;      // list of true ranking
+vector<vector<bool>> rel; // relation matrix
 
-vector<int> sorted, uni_preds, indexes;
-
-vector<int> output_rank;
+vector<int> sorted; // sorted list of objects
+vector<int> uni_preds, indexes; // uniquified predictions and indexes
+vector<int> output_rank;    // output ranking
 
 // for tim sort
 vector<int> leftTemp, rightTemp;
@@ -34,6 +34,7 @@ vector<int> left_sorted, right_sorted, left_bef, right_aft, insert_par, combine;
 // vector<int> left_order, right_order, left_weight, right_weight
 
 vector<Node *> ai_to_node;
+vector<int> li, ri;
 
 // for DirtyClean2
 vector<int> shuffledA;
@@ -50,33 +51,25 @@ vector <string> names{
     "MergeSort",
     "QuickSort",
     "TimSort",
-    // "BlockMergeSort",
     "OESM",
     "Cook_Kim",
+    "InsertionSort",
 
     "LIS",
-    // "LIS_small",
-    "LIS_treap",
-
-    "BothAlgo",
-    // "BothAlgo_small"
+    "BothAlgo2",
 };
 vector <SortAlgorithm*> algos {
     new MergeSort(),
     new QuickSort(),
     new TimSort(),
-    // new BlockMergeSort(),
+    // new TimSort2(),
     new OESM(),
     new Cook_Kim(),
+    new Insertion(),
 
     new LIS(),
-    // new LIS_small(),
-    new LIS_treap(),
-
-    new BothAlgo(),
-    // new BothAlgo_small()
+    new BothAlgo2(),
 };
-//, new BothAlgo()}; //, new naiveDirtyClean2()}
 
 void main_objects(int n, int REP, string setting)
 {
@@ -97,25 +90,19 @@ void main_objects(int n, int REP, string setting)
 
             if (setting == "exact")
                 defaultrelation(game, n);
-            else if (setting == "inverse")
-                worstobject(game, n);
-            else if (setting == "bad")
-                badobject(game, n, error_rate);
-            else if (setting == "permute")
-                permuteobject(game, n, error_rate);
-            else if (setting == "decay")
-                decayobject(game, n, error_rate);
             else if (setting == "decay2")
                 decayobject2(game, n, error_rate);
+            else if (setting == "decay2_1000")
+                decayobject2_1000(game, n, error_rate);
             else if (setting == "local") {
                 int seg = error_rate * n; //for stability when error_rate = 0
                 if (seg == 0)
-                    seg = 0.005 * n;
+                    seg = 1;
                 localshuffleobject(game, n, seg);
             }
             else {
-                    cerr << "wrong setting" << endl;
-                    exit(0);
+                cerr << "wrong setting" << endl;
+                exit(0);
             }
 
             SortController controller(game);
@@ -126,10 +113,6 @@ void main_objects(int n, int REP, string setting)
             for (int j = 0; j < num_algo; j++)
                 result[j].push_back(tmp[j]);
         }
-        // for (int i = 0; i < num_algo; i++)
-            // result[i] /= REP;
-
-        // game.output_rank();
         results.push_back(result);
         // print result
         for (int d1 = 0; d1 < num_algo; d1++) {
@@ -180,31 +163,20 @@ void main_relational(int n, int REP, string setting)
         double start_time = get_time();
         double error_rate = i / (double)gap;
 
+        // error_rate = rand() / (double)RAND_MAX;
+        // cerr << "start error = " << error_rate << endl;
+
         vector<vector<ll>> result;
         result.resize(num_algo);
         int REP_ALGO = 5;
+        assert(REP >= REP_ALGO);
         for (int i = 0; i < REP / REP_ALGO; i++)
         {
             SortGame *game = new SortGame();
             if (setting == "goodbad" || setting == "gb")
                 Goodbadrelation(game, n, error_rate);
-            else if (setting == "inverse")
-                inverserelation(game, n);
-            else if (setting == "exact")
-                defaultrelation(game, n);
             else if (setting == "badgood" || setting == "bg")
                 Badgoodrelation(game, n, error_rate);
-            else if (setting == "prod")
-                Productrelation(game, n, error_rate);
-            else if (setting == "prod2")
-                Productrelation2(game, n, error_rate);
-            else if (setting == "indep")
-                IndepRelation(game, n, error_rate);
-            else if (setting == "sigmoid")
-            {
-                SigmoidRelation(game, n, error_rate);
-                // game->print();
-            }
             else
             {
                 cerr << "wrong setting" << endl;
@@ -224,46 +196,15 @@ void main_relational(int n, int REP, string setting)
 
         // game.output_rank();
         results.push_back(result);
-        // print result
-        //  cerr << "result: ";
-        //  for (int i = 0; i < num_algo; i++)
-        //      cerr << result[i] << " ";
-        //  cerr << endl;
         cerr << "finished error = " << error_rate << " time spend: " << get_time() - start_time << endl;
     }
 }
-
-// void main_tennis(int n, int REP) {
-//     // const int num_algo = 11;
-//     // SortAlgorithm *algos[num_algo] = {new DirtyClean(), new LIS(), new naiveDirtyClean(), new DirtyClean2(), new naiveDirtyClean2(), new BothAlgo(), new MergeSort(), new QuickSort(), new HeapSort(), new TimSort(), new BlockMergeSort()};
-//     // string names[num_algo] = {"DirtyClean", "LIS","Both", "MergeSort", "QuickSort", "HeapSort", "TimSort", "BlockMergeSort"};
-
-//         double start_time = get_time();
-
-//         vector <int> result(num_algo, 0);
-//         for (int i = 0; i < REP; i++) {
-//             SortGame* game = new SortGame();
-//             Tennisrelation(game, n);
-
-//             SortController controller(game);
-//             for (int i = 0; i < num_algo; i++)
-//                 controller.addAlgorithm(algos[i], names[i]);
-//             vector<int> tmp = controller.runGame(i==0);
-//             for (int j = 0; j < num_algo; j++)
-//                 result[j] += tmp[j] * 1.0 / REP;
-//         }
-
-//         results.push_back(result);
-//         cerr << "finished " << get_time() - start_time << endl;
-//     // }
-//     output(vector<string>(names, names + num_algo));
-// }
 
 int main()
 {
 
     srand(19260817);
-
+    assert(names.size() == algos.size());
     // main2();
     string pred_type, setting;
     int n = 0, rep = 0;
@@ -272,26 +213,43 @@ int main()
     {
         if (setting == "country" || setting == "c")
         {
-            names.push_back("LIS_small");
-            algos.push_back(new LIS_small());
-            names.push_back("BothAlgo_small");
-            algos.push_back(new BothAlgo_small());
             n = 263;
             cin >> rep;
+            if (n <= 100000) {
+                names.push_back("LIS_small");
+                algos.push_back(new LIS_small());
+                names.push_back("BothAlgo_small");
+                algos.push_back(new BothAlgo_small());
+                names.push_back("DirtyClean4");
+                algos.push_back(new DirtyClean4());
+            }
             main2(rep);
         }
         else
         {
             cin >> n >> rep;
+            if (n <= 100000) {
+                names.push_back("LIS_small");
+                algos.push_back(new LIS_small());
+                names.push_back("BothAlgo_small");
+                algos.push_back(new BothAlgo_small());
+                names.push_back("DirtyClean4");
+                algos.push_back(new DirtyClean4());
+            }
             main_objects(n, rep, setting);
         }
     }
     else if (pred_type == "relational" || pred_type == "r")
     {
-        names.push_back("DirtyClean2");
-        algos.push_back(new DirtyClean2());
-        // names.push_back("DirtyClean2_freeze");
-        // algos.push_back(new DirtyClean2_freeze());
+        names.push_back("DirtyClean4");
+        algos.push_back(new DirtyClean4());
+        if (n <= 100000) {
+            names.push_back("LIS_small");
+            algos.push_back(new LIS_small());
+            names.push_back("BothAlgo_small");
+            algos.push_back(new BothAlgo_small());
+        }
+
         cin >> n >> rep;
         main_relational(n, rep, setting);
     }

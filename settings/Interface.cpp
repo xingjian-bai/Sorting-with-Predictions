@@ -15,8 +15,6 @@ vector<int> generateRandomPermutation(int size) {
     return permutation;
 }
 
-
-
 double SortGame::eta_diff() const {
     double sum = 0;
     for (int i = 0; i < getSize(); ++i) {
@@ -75,27 +73,6 @@ double SortGame::eta_min() const {
     return sum;
 }
 
-// void SortGame::summary() {
-//     cerr << "eta_diff = " << eta_diff() << endl;
-//     cerr << "eta_left = " << eta_left() << endl;
-//     cerr << "eta_right = " << eta_right() << endl;
-//     cerr << "eta_min = " << eta_min() << endl;
-// }
-
-
-// void SortGame::calculateRank() {
-//     ranking.resize(getSize());
-//     vector<pair<ll, int>> tmp;
-//     for (int i = 0; i < getSize(); ++i) {
-//         tmp.push_back(make_pair(A[i], i));
-//     }
-//     sort(tmp.begin(), tmp.end());
-//     for (int i = 0; i < getSize(); ++i) {
-//         ranking[tmp[i].second] = i;
-//     }
-// }
-
-
 double SortGame::eta_dirty() const {
     double sum = 0;
     for (int i = 0; i < getSize(); ++i) {
@@ -117,12 +94,6 @@ void SortGame::ReltoRank() {
 
     for (int i = 0; i < getSize(); ++i)
         preds[A[i]] = i;
-    
-    // cerr << "ReltoRank finished" << endl;
-    // for (int i = 0; i < getSize(); ++i) {
-    //     cerr << preds[i] << " ";
-    // }
-    // cerr << endl;
 }
 void SortGame::ReltoRank_recursion(int st, int ed) {
     // cerr << "recursion " << st << " " << ed << endl;

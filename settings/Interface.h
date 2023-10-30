@@ -5,10 +5,10 @@
 using namespace std;
 typedef long long ll;
 
-extern std::vector<ll> A;         // 数字数组
-extern std::vector<int> preds;     // 预测排名数组
-extern std::vector<int> ranking;      // 真实排名数组
-extern std::vector<vector<bool>> rel; // 关系数组
+extern std::vector<ll> A;         // value
+extern std::vector<int> preds;     // prediction
+extern std::vector<int> ranking;      // rank
+extern std::vector<vector<bool>> rel; // relation matrix
 
 class SortGame {
 public:
@@ -17,6 +17,7 @@ public:
     bool compare(int i, int j)      {
         assert(i != j);
         cmp_counter++;
+        // cerr << "cmp " << i << " " << j << endl;
         return ranking[i] < ranking[j];
     }
     bool dirtyCompare(int i, int j) { return rel[i][j];}
@@ -60,8 +61,8 @@ public:
     }
     // void summary();
     
-    ll cmp_counter = 0;        // 比较计数器
-    void calculateRank();       // 计算rank数组
+    ll cmp_counter = 0;        
+    void calculateRank();
 
     void ReltoRank();           
     void ReltoRank_recursion(int l, int r); 

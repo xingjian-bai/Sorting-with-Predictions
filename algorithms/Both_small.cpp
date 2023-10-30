@@ -28,7 +28,12 @@ void BothAlgo_small::sort(SortGame &game)
 
     left_sorted.clear(); right_sorted.clear();
     left_bef.clear();    right_aft.clear();
-    // cerr << "n = " << n << endl;
+    
+    vector<int> li, ri;
+    for (int i = 0; i < n; i++) {
+        if (i < n / 2)  li.push_back(-1);
+        else            ri.push_back(-1);
+    }
     for (int delta = 1; delta / 2 <= n; delta <<= 1) {
         // cerr << "delta = " << delta << endl;
         for (int i = 0; i < n; i++)
@@ -50,6 +55,7 @@ void BothAlgo_small::sort(SortGame &game)
                 }
                 int st = max(0, (int)left_bef.size() - delta);
                 int ed = left_bef.size() - delta / 2;
+                // cerr << "LL insert " << i << " interval=" << ed - st + 1 << endl;
                 while (ed - st > 1)
                 {
                     int mid = (st + ed) >> 1;
@@ -85,6 +91,8 @@ void BothAlgo_small::sort(SortGame &game)
                 }
                 int st = delta / 2;
                 int ed = min((int)right_aft.size(), delta);
+                // cerr << "RR insert " << i << " interval=" << ed - st + 1 << endl;
+
                 while (ed - st > 1)
                 {
                     int mid = ((st + ed + 1) >> 1) - 1;
