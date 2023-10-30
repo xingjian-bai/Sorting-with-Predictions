@@ -1,7 +1,9 @@
-.DS_store/
-
+.DS_store
 .__pycache__/
 
 data/
 plots/
 archiv/
+
+
+main
