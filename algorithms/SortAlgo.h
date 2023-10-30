@@ -21,7 +21,7 @@ extern vector<int> ordered, unordered1, unordered2;
 extern vector<int> p_to_A, inserted;
 extern vector<int> left_sorted, right_sorted, left_bef, right_aft, combine, insert_par;
 // extern vector<int> left_order, right_order, left_weight, right_weight;
-
+extern vector<int> li, ri;
 
 //for DirtyClean2
 extern vector<int> shuffledA;
@@ -83,6 +83,14 @@ class BothAlgo_small : public SortAlgorithm {
 public:
     //init functions
     BothAlgo_small() = default;
+
+    void sort(SortGame& game) override;
+};
+
+class BothAlgo_small3 : public SortAlgorithm {
+public:
+    //init functions
+    BothAlgo_small3() = default;
 
     void sort(SortGame& game) override;
 };

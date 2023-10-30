@@ -1,6 +1,6 @@
-"""
+/*
 Code is modified from: https://www.geeksforgeeks.org/timsort/
-"""
+*/
 #include "SortAlgo.h"
 #include "Utils.h"
 #include <algorithm>
