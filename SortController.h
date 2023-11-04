@@ -3,7 +3,6 @@
 #include "algorithms/SortAlgo.h"
 
 using namespace std;
-
 class SortController {
 public:
     SortController(SortGame* game);

@@ -1,13 +1,8 @@
 .DS_store
-*/.DS_store
 .__pycache__/
 
 data/
 plots/
 archiv/
-
-algorithms/DirtyClean2_freeze.cpp
-algorithms/naiveDirtyClean2.cpp
-
 
 main

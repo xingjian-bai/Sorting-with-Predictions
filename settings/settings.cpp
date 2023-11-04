@@ -184,7 +184,7 @@ void Badgoodrelation(SortGame *game, int size, double ratio) {
 void localshuffleobject(SortGame *game, int size, int seg) {
     defaultobject(game, size);
 
-    segs.resize(0);
+    vector<int> segs;
     for (int i = 0; i < seg; i ++) //for stability when seg == 0 
         segs.push_back((ll)rand() * rand() % size);
     sort(segs.begin(), segs.end());
