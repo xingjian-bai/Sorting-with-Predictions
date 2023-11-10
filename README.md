@@ -1,9 +1,9 @@
 
-# Learning Augmented Sorting
+# Sorting with Predictions
 This repository is the official implementation of *Sorting with Predictions*.
 
 # Run the code
-To run the code, please run the following commands in terminal:
+To run the code, please run the following commands in the terminal:
 ```
 bash compile.sh
 ./main
@@ -15,7 +15,7 @@ positional decay 1000 30 # positional predictions, decay setting, with 1000 item
 dirty good-dominating 10000 10 # dirty comparison predictions, good-dominating setting, with 10000 items, repeated 10 times.
 ```
 
-To visualize the number of comparisons needed by each algorithm and baseline, check the python script `plot.ipynb`.
+To visualize the number of comparisons needed by each algorithm and baseline, check the Python script `plot.ipynb`.
 
 # Proposed algorithms
 - The implementation of Double-Hoover Sort is at `algorithms/Both2.cpp`.
